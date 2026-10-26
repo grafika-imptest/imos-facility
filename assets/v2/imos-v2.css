@@ -182,17 +182,29 @@ html.v2 .g-mapwrap.g-mapwrap--big{height:clamp(480px,72vh,760px)!important}
 .v2-pick a{display:inline-flex;margin-top:12px;align-items:center;gap:8px;height:48px;padding:0 22px;border-radius:999px;color:#fff!important;font-weight:600;background:linear-gradient(135deg,#0A6E9B,var(--imos-dark))}
 
 /* výpis zasedaček – výběr dne a časů */
-.v2-when{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 28px;padding:14px;border-radius:24px;background:rgba(255,255,255,.8);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow);}
-.v2-when > b{padding:0 8px 0 10px;font:600 15px/1 "Inter";white-space:nowrap}
-.v2-when__days{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;flex:1 1 400px;padding:2px}
+.v2-when{position:relative;z-index:5;display:flex;flex-direction:column;gap:14px;margin:0 0 28px;padding:20px 22px;border-radius:24px;background:rgba(255,255,255,.8);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow);}
+.v2-when > b{font:600 16px/1.2 var(--font-d);letter-spacing:-.01em}
+.v2-when__days{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;flex:1 1 auto;min-width:0;padding:2px}
 .v2-when__days::-webkit-scrollbar{display:none}
 .v2-when__days button, .v2-when__slots button{flex:none;border:1px solid rgba(7,92,130,.14);background:rgba(255,255,255,.72);border-radius:16px;cursor:pointer;color:var(--ink);transition:all .25s var(--ease)}
-.v2-when__days button{width:58px;height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:600 18px/1 "Inter"}
+.v2-when__days button{min-width:68px;height:64px;padding:0 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:600 16px/1 "Inter"}
 .v2-when__days button small{font:600 11px/1 "Inter";letter-spacing:.06em;text-transform:uppercase;color:#6B767D}
 .v2-when__slots{display:flex;gap:8px;flex-wrap:wrap}
 .v2-when__slots button{height:44px;padding:0 16px;border-radius:999px;font:600 14px/1 "Inter"}
 .v2-when button.is-on{background:linear-gradient(135deg,#0A6E9B,var(--imos-dark));color:#fff;border-color:transparent}
 .v2-when button.is-on small{color:rgba(255,255,255,.75)}
+.v2-when__row{display:flex;align-items:center;gap:10px;min-width:0}
+.v2-when__calwrap{position:relative;flex:none}
+.v2-when__cal{display:inline-flex;align-items:center;gap:8px;height:64px;padding:0 18px;border-radius:16px;border:1px dashed rgba(7,92,130,.4);background:rgba(255,255,255,.72);color:var(--imos);font:600 14px/1 "Inter";cursor:pointer;white-space:nowrap;transition:all .25s var(--ease)}
+.v2-when__cal:hover{border-style:solid;background:#fff}
+.v2-when__cal.is-on{border-style:solid}
+.v2-when__pop{position:absolute;right:0;top:calc(100% + 10px);z-index:20;width:340px;padding:18px;border-radius:22px;background:#fff;border:1px solid rgba(7,92,130,.12);box-shadow:0 30px 70px -24px rgba(4,38,58,.4);animation:v2pop .35s var(--ease) both}
+.v2-when__pop .v2-cal__head{margin-bottom:12px}
+.v2-when__pop .v2-cal__nav button{width:36px;height:36px}
+.v2-when__pop .v2-cal__grid{gap:4px}
+.v2-when__pop .v2-day{height:40px;border-radius:10px;font-size:14px;background:rgba(234,245,251,.6)}
+.v2-when__pop .v2-day:disabled{background:transparent}
+@media (max-width:640px){.v2-when__row{flex-direction:column;align-items:stretch}.v2-when__pop{left:0;right:auto;width:min(340px,calc(100vw - 72px))}}
 .v2-avail{position:absolute;right:20px;top:20px;z-index:2;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;font:600 13px/1 "Inter";color:#fff;
   background:rgba(47,133,90,.8);border:1px solid rgba(255,255,255,.35);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .v2-avail::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff}
