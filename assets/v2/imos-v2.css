@@ -114,19 +114,10 @@ html.v2 .g-btn:hover{transform:translateY(-2px)}
 html.v2 .g-card input:not([type=checkbox]):not([type=range]), html.v2 .g-card textarea{background:rgba(255,255,255,.7)!important;border-color:rgba(7,92,130,.16)!important;border-radius:14px!important}
 
 /* hodnoty – ikony v kruzích */
-/* ikony hodnot – jednotný styl (stejná linka, zakončení, velikost) + posunutý stín v barvě IMOS (inspirace supersklep.cz) */
-html.v2 .g-icon{position:relative;width:112px!important;height:112px!important;background:none!important;border:none;box-shadow:none}
-html.v2 .g-icon svg{width:76px;height:76px;overflow:visible;stroke-linecap:round;stroke-linejoin:round;fill:none}
-html.v2 .g-icon .v2-ico{position:relative;z-index:1;color:var(--ink);stroke-width:.8}
-html.v2 .g-icon .v2-ico-shadow{position:absolute;left:50%;top:50%;margin:-38px 0 0 -38px;z-index:0;color:var(--imos-sky);stroke-width:2.2;opacity:.7;
-  transform:translate(6px,6px);transition:transform .5s var(--ease),color .4s}
-html.v2 .g-icon.v2-ico-wait .v2-ico-shadow{opacity:0;transform:translate(-6px,-6px)}
-html.v2 .g-icon.v2-ico-wait.is-in .v2-ico-shadow{opacity:.7;transform:translate(6px,6px);transition:transform 1s var(--ease),opacity .8s,color .4s}
-html.v2 .g-value{cursor:default}
-html.v2 .g-value:hover .g-icon .v2-ico-shadow{transform:translate(10px,9px);color:#4FB3E0}
-html.v2 .g-value h4{transition:color .3s}
-html.v2 .g-value:hover h4{color:var(--imos)}
-@media (min-width:1200px){html.v2 .g-value + .g-value{border-left:1px solid var(--line)}}
+html.v2 .g-icon{background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(214,236,247,.7))!important;border:1px solid #fff;box-shadow:var(--glass-shadow);transition:transform .5s var(--ease),box-shadow .5s var(--ease)}
+html.v2 .g-icon svg{transition:transform .5s var(--ease)}
+html.v2 .g-value:hover .g-icon{transform:scale(1.08);box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 26px 50px -18px rgba(4,38,58,.3)}
+html.v2 .g-value:hover .g-icon svg{transform:scale(1.06)}
 
 /* mapa */
 html.v2 .g-mapwrap{margin:0 auto!important;width:min(1640px,calc(100% - 28px));border-radius:36px;overflow:hidden;box-shadow:var(--glass-shadow)}
