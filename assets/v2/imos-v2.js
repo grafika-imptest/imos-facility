@@ -118,6 +118,31 @@
       requestAnimationFrame(() => dispatchEvent(new Event('resize')));
     }
     root.querySelectorAll('.leaflet-container').forEach(el => el.setAttribute('data-lenis-prevent', ''));
+    menu();
+  }
+
+  /* ---------- mobilní menu: rozmazané pozadí + kontakty dole ---------- */
+  function menu() {
+    const hd = document.querySelector('.g-header');
+    if (!hd) return;
+    let scrim = document.querySelector('.v2-scrim');
+    if (!scrim) {
+      scrim = document.createElement('div'); scrim.className = 'v2-scrim';
+      scrim.addEventListener('click', () => { const b = hd.querySelector('button[aria-label="Menu"]'); b && b.click(); });
+      document.body.appendChild(scrim);
+    }
+    const nav = hd.querySelector(':scope > nav');
+    html.classList.toggle('v2-menu-open', !!nav);
+    if (window.V2_LENIS) nav ? window.V2_LENIS.stop() : window.V2_LENIS.start();
+    if (nav) {
+      hd.classList.remove('is-hidden');
+      nav.setAttribute('data-lenis-prevent', '');
+      if (!nav.querySelector('.v2-menu-foot')) {
+        const f = document.createElement('div'); f.className = 'v2-menu-foot';
+        f.innerHTML = '<a href="tel:+420533432111">+420 533 432 111</a><a href="mailto:spravam@imosfacility.cz">spravam@imosfacility.cz</a>';
+        nav.appendChild(f);
+      }
+    }
   }
 
   /* ---------- hero ---------- */
