@@ -99,6 +99,9 @@ html.v2 .g-media{border-radius:var(--r)!important}
 html.v2 .g-card .g-media, html.v2 .g-card > div:first-child{border-radius:0}
 html.v2 .g-pill{background:rgba(255,255,255,.72)!important;color:var(--imos)!important;border:1px solid rgba(255,255,255,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 html.v2 .g-pill.is-free{background:rgba(47,133,90,.78)!important;color:#fff!important;border-color:rgba(255,255,255,.35)}
+html.v2 .g-pill.is-busy{background:rgba(200,2,37,.82)!important;color:#fff!important;border-color:rgba(255,255,255,.35)}
+html.v2 .g-map-pop{animation:v2pop .45s var(--ease) both}
+@keyframes v2pop{from{opacity:0;transform:translateY(10px) scale(.97)}}
 
 /* dlaždice kategorií – skleněný popisek místo plného modrého */
 html.v2 .g-tile-label{background:rgba(255,255,255,.18)!important;border:1px solid rgba(255,255,255,.4);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%)}
@@ -204,3 +207,17 @@ html.v2 .g-mapwrap.g-mapwrap--big{height:clamp(480px,72vh,760px)!important}
 .v2-avail.is-busy{background:rgba(60,70,76,.72)}
 
 @media (prefers-reduced-motion:reduce){.v2-aura i{animation:none}}
+
+/* hero – CTA */
+.v2-hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:36px}
+.v2-cta{display:inline-flex;align-items:center;gap:10px;height:60px;padding:0 28px;border-radius:999px;font:600 16px/1 "Inter",sans-serif;text-decoration:none;white-space:nowrap;
+  transition:transform .4s var(--ease),gap .3s var(--ease),background .3s,box-shadow .4s var(--ease)}
+.v2-cta:hover{transform:translateY(-2px);gap:16px}
+.v2-cta--primary{background:#fff;color:var(--imos-dark)!important;box-shadow:0 18px 40px -16px rgba(0,0,0,.5)}
+.v2-cta--primary:hover{background:var(--imos-tint)}
+.v2-cta--glass{color:#fff!important;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);-webkit-backdrop-filter:blur(16px) saturate(150%);backdrop-filter:blur(16px) saturate(150%)}
+.v2-cta--glass:hover{background:rgba(255,255,255,.24)}
+.v2-cta--link{height:auto;padding:8px 6px;color:#fff!important;background-image:linear-gradient(currentColor,currentColor);background-size:100% 1px;background-position:left bottom;background-repeat:no-repeat}
+.v2-cta--link:hover{background-size:40% 1px;transform:none}
+html.v2 .g-hero > div:nth-of-type(4){padding-bottom:150px!important}
+@media (max-width:640px){.v2-cta{height:54px;padding:0 22px}.v2-cta--link{display:none}}
