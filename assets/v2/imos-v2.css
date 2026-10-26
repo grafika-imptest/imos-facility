@@ -15,13 +15,8 @@ html.lenis, html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
 .lenis.lenis-stopped{overflow:hidden}
 
-/* pozadí – měkké barevné skvrny, ať má sklo co rozmazávat */
-.v2-aura{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-.v2-aura i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;will-change:transform}
-.v2-aura i:nth-child(1){width:46vw;height:46vw;left:-12vw;top:-8vw;background:radial-gradient(circle,#BFE4F6 0%,transparent 70%);animation:v2drift 26s ease-in-out infinite alternate}
-.v2-aura i:nth-child(2){width:40vw;height:40vw;right:-10vw;top:30vh;background:radial-gradient(circle,#CFE0FF 0%,transparent 70%);animation:v2drift 32s ease-in-out infinite alternate-reverse}
-.v2-aura i:nth-child(3){width:34vw;height:34vw;left:30vw;bottom:-14vw;background:radial-gradient(circle,#D8F1EC 0%,transparent 70%);animation:v2drift 38s ease-in-out infinite alternate}
-@keyframes v2drift{to{transform:translate3d(6vw,-4vh,0) scale(1.12)}}
+/* pozadí – měkké barevné skvrny jen jako statický gradient (rozmazané animované vrstvy zatěžovaly každý snímek scrollu) */
+html.v2 body{background:radial-gradient(60vw 60vw at -10% 0%,rgba(191,228,246,.55),transparent 70%),radial-gradient(50vw 50vw at 110% 40%,rgba(207,224,255,.45),transparent 70%),#F3F8FB!important}
 
 /* typografie */
 html.v2 h1, html.v2 h2{font-family:var(--font-d)!important;letter-spacing:-.035em!important;font-weight:650!important}
@@ -34,7 +29,7 @@ html.v2 .g-eyebrow::before{content:"";width:22px;height:1px;background:currentCo
 /* hlavička – plovoucí skleněná lišta */
 html.v2 header.g-header{top:14px!important;left:50%!important;right:auto!important;transform:translateX(-50%);width:min(1640px,calc(100% - 28px))!important;height:72px!important;
   border-radius:22px;background:rgba(255,255,255,.52)!important;border:1px solid var(--glass-line);
-  -webkit-backdrop-filter:blur(22px) saturate(170%)!important;backdrop-filter:blur(22px) saturate(170%)!important;box-shadow:var(--glass-shadow)!important;transition:background .4s var(--ease),transform .5s var(--ease)!important}
+  -webkit-backdrop-filter:blur(14px) saturate(160%)!important;backdrop-filter:blur(14px) saturate(160%)!important;box-shadow:var(--glass-shadow)!important;transition:background .4s var(--ease),transform .5s var(--ease)!important}
 html.v2 header.g-header > div{width:calc(100% - 40px)!important}
 html.v2 header.g-header.is-hidden{transform:translate(-50%,-120%)}
 html.v2 header.g-header.on-dark{background:rgba(4,38,58,.28)!important;border-color:rgba(255,255,255,.22)}
@@ -80,8 +75,7 @@ html.v2 .g-hero{border-radius:0 0 40px 40px;min-height:820px!important}
 html.v2 .g-hero h1{font-size:clamp(52px,7vw,128px)!important;line-height:.95!important;font-weight:600!important;text-shadow:none!important;max-width:14ch}
 html.v2 .g-hero p{font-size:clamp(18px,1.4vw,22px)!important;line-height:1.5!important;opacity:.92}
 .v2-hero-stats{position:absolute;right:max(24px,calc((100% - 1600px)/2));bottom:56px;display:flex;gap:12px;z-index:3}
-.v2-stat{min-width:168px;padding:18px 22px;border-radius:22px;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);
-  -webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%)}
+.v2-stat{min-width:168px;padding:18px 22px;border-radius:22px;color:#fff;background:rgba(4,38,58,.38);border:1px solid rgba(255,255,255,.28)}
 .v2-stat b{display:block;font:600 40px/1 var(--font-d);letter-spacing:-.03em}
 .v2-stat span{display:block;margin-top:8px;font-size:14px;opacity:.82}
 @media (max-width:1100px){.v2-hero-stats{display:none}}
@@ -91,8 +85,7 @@ html.v2 .g-tint{background:linear-gradient(180deg,rgba(234,245,251,0) 0%,rgba(22
 html.v2 section{position:relative}
 
 /* karty → sklo */
-html.v2 .g-card{background:var(--glass)!important;border:1px solid var(--glass-line)!important;border-radius:var(--r)!important;
-  -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);box-shadow:var(--glass-shadow)!important}
+html.v2 .g-card{background:rgba(255,255,255,.8)!important;border:1px solid var(--glass-line)!important;border-radius:var(--r)!important;box-shadow:var(--glass-shadow)!important}
 html.v2 a.g-card{transition:transform .6s var(--ease),box-shadow .6s var(--ease)!important}
 html.v2 a.g-card:hover{transform:translateY(-6px)!important;box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 34px 70px -24px rgba(4,38,58,.32)!important}
 html.v2 .g-media{border-radius:var(--r)!important}
@@ -102,7 +95,7 @@ html.v2 .g-map-pop{animation:v2pop .45s var(--ease) both}
 @keyframes v2pop{from{opacity:0;transform:translateY(10px) scale(.97)}}
 
 /* dlaždice kategorií – skleněný popisek místo plného modrého */
-html.v2 .g-tile-label{background:rgba(255,255,255,.18)!important;border:1px solid rgba(255,255,255,.4);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%)}
+html.v2 .g-tile-label{border:1px solid rgba(255,255,255,.4)}
 html.v2 .g-tile-label{background:rgba(7,92,130,.55)!important}
 html.v2 .g-tile-label > span:first-child{background:rgba(255,255,255,.86)!important}
 
@@ -126,7 +119,7 @@ html.v2 .leaflet-container{background:#E6EFF4!important}
 html.v2 .leaflet-control-zoom{border:none!important;border-radius:16px!important;overflow:hidden;box-shadow:var(--glass-shadow)!important}
 html.v2 .leaflet-control-zoom a{background:var(--glass-strong)!important;backdrop-filter:blur(14px);color:var(--imos)!important;border-color:rgba(7,92,130,.08)!important}
 html.v2 .leaflet-control-attribution{background:rgba(255,255,255,.55)!important;border-radius:10px 0 0 0;font-size:10px}
-html.v2 .g-map-legend, html.v2 .g-map-pop{background:var(--glass-strong)!important;border:1px solid var(--glass-line);-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%)}
+html.v2 .g-map-legend, html.v2 .g-map-pop{background:rgba(255,255,255,.94)!important;border:1px solid var(--glass-line)}
 html.v2 .g-map-pop{border-radius:var(--r)!important}
 
 /* patička */
@@ -134,7 +127,7 @@ html.v2 footer.g-footer{margin:0 14px 14px;border-radius:40px;background:radial-
 
 /* přepínač verzí – vlevo dole */
 .v2-switch{position:fixed;left:18px;bottom:18px;z-index:5000;display:flex;align-items:center;gap:4px;padding:5px;border-radius:999px;
-  background:rgba(15,26,32,.62);border:1px solid rgba(255,255,255,.18);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  background:rgba(15,26,32,.86);border:1px solid rgba(255,255,255,.18);
   box-shadow:0 18px 40px -16px rgba(0,0,0,.45);font:600 13px/1 "Inter",system-ui,sans-serif}
 .v2-switch a{display:flex;align-items:center;gap:8px;height:36px;padding:0 16px;border-radius:999px;color:rgba(255,255,255,.78)!important;text-decoration:none;white-space:nowrap;transition:background .3s,color .3s}
 .v2-switch a:hover{color:#fff!important;background:rgba(255,255,255,.1)}
@@ -149,8 +142,7 @@ html.v2-motion [data-reveal].v2-in{opacity:1}
 html.v2 .g-mapwrap.g-mapwrap--big{height:clamp(480px,72vh,760px)!important}
 
 /* kalendář dostupnosti zasedaček */
-.v2-cal{margin:0 0 32px;padding:40px;border-radius:var(--r);background:var(--glass);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow);
-  -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:48px}
+.v2-cal{margin:0 0 32px;padding:40px;border-radius:var(--r);background:rgba(255,255,255,.8);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow);display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:48px}
 @media (max-width:980px){.v2-cal{grid-template-columns:1fr;padding:24px;gap:32px}}
 .v2-cal h3{margin:0;font:650 28px/1.15 var(--font-d);letter-spacing:-.02em}
 .v2-cal__head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
@@ -190,8 +182,7 @@ html.v2 .g-mapwrap.g-mapwrap--big{height:clamp(480px,72vh,760px)!important}
 .v2-pick a{display:inline-flex;margin-top:12px;align-items:center;gap:8px;height:48px;padding:0 22px;border-radius:999px;color:#fff!important;font-weight:600;background:linear-gradient(135deg,#0A6E9B,var(--imos-dark))}
 
 /* výpis zasedaček – výběr dne a časů */
-.v2-when{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 28px;padding:14px;border-radius:24px;background:var(--glass);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow);
-  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.v2-when{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 28px;padding:14px;border-radius:24px;background:rgba(255,255,255,.8);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow);}
 .v2-when > b{padding:0 8px 0 10px;font:600 15px/1 "Inter";white-space:nowrap}
 .v2-when__days{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;flex:1 1 400px;padding:2px}
 .v2-when__days::-webkit-scrollbar{display:none}
@@ -207,7 +198,6 @@ html.v2 .g-mapwrap.g-mapwrap--big{height:clamp(480px,72vh,760px)!important}
 .v2-avail::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff}
 .v2-avail.is-busy{background:rgba(60,70,76,.72)}
 
-@media (prefers-reduced-motion:reduce){.v2-aura i{animation:none}}
 
 /* hero – CTA */
 .v2-hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:36px}
@@ -216,9 +206,12 @@ html.v2 .g-mapwrap.g-mapwrap--big{height:clamp(480px,72vh,760px)!important}
 .v2-cta:hover{transform:translateY(-2px);gap:16px}
 .v2-cta--primary{background:#fff;color:var(--imos-dark)!important;box-shadow:0 18px 40px -16px rgba(0,0,0,.5)}
 .v2-cta--primary:hover{background:var(--imos-tint)}
-.v2-cta--glass{color:#fff!important;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);-webkit-backdrop-filter:blur(16px) saturate(150%);backdrop-filter:blur(16px) saturate(150%)}
+.v2-cta--glass{color:#fff!important;background:rgba(4,38,58,.4);border:1px solid rgba(255,255,255,.4)}
 .v2-cta--glass:hover{background:rgba(255,255,255,.24)}
 .v2-cta--link{height:auto;padding:8px 6px;color:#fff!important;background-image:linear-gradient(currentColor,currentColor);background-size:100% 1px;background-position:left bottom;background-repeat:no-repeat}
 .v2-cta--link:hover{background-size:40% 1px;transform:none}
 html.v2 .g-hero > div:nth-of-type(4){padding-bottom:150px!important}
 @media (max-width:640px){.v2-cta{height:54px;padding:0 22px}.v2-cta--link{display:none}}
+
+/* výkon: video v hero na vlastní vrstvě */
+html.v2 .g-hero > div:first-child{will-change:transform}
