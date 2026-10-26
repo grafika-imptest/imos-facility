@@ -8,6 +8,8 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <script src="./support.js"></script>
+<link rel="stylesheet" href="assets/v2/imos-v2.css">
+<script src="assets/v2/imos-v2.js"></script>
 </head>
 <body>
 <x-dc>
@@ -313,7 +315,7 @@ class Component extends DCLogic {
   }
   reduced() { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
   setupReveal() {
-    if (this.reduced() || this.props.reveal === false) return;
+    if (window.IMOS_V2 || this.reduced() || this.props.reveal === false) return;
     const els = Array.from(document.querySelectorAll('[data-reveal]'));
     const ease = 'cubic-bezier(0.22,1,0.36,1)';
     els.forEach(el => { const t = el.dataset.reveal; el.style.opacity = '0'; if (t !== 'fade') el.style.transform = 'translateY(' + (t === 'media' ? 32 : 24) + 'px)'; });
@@ -330,7 +332,7 @@ class Component extends DCLogic {
   initMini() {
     const L = window.L, hq = [49.2005, 16.6430];
     this.mini = L.map(this.miniMapRef.current, { scrollWheelZoom: false, zoomControl: false, attributionControl: false }).setView(hq, 15);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(this.mini);
+    IMOS_TILES(L).addTo(this.mini);
     L.marker(hq, { icon: L.divIcon({ className: '', html: '<div style="width:22px;height:22px;border-radius:50%;background:#075C82;border:3px solid #fff;box-shadow:0 0 0 10px rgba(7,92,130,0.22)"></div>', iconSize: [22, 22], iconAnchor: [11, 11] }) }).addTo(this.mini);
   }
   renderVals() {

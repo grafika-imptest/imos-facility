@@ -1,0 +1,176 @@
+/* IMOS facility – návrh v2: moderní vrstva nad exportem z Claude Design.
+   Šablony mají styly inline, proto imos-v2.js prvky po vykreslení označí třídami (g-…)
+   a tady je přepisujeme přes !important. Barvy vychází z původní palety IMOS. */
+:root{
+  --imos:#075C82; --imos-dark:#053F5A; --imos-deep:#04263A; --imos-sky:#7FCBEE; --imos-tint:#EAF5FB; --imos-red:#C80225;
+  --ink:#0F1A20; --ink-2:#3A4349; --line:rgba(7,92,130,.12);
+  --glass:rgba(255,255,255,.58); --glass-strong:rgba(255,255,255,.74); --glass-line:rgba(255,255,255,.7);
+  --glass-shadow:0 1px 0 rgba(255,255,255,.8) inset, 0 20px 50px -18px rgba(4,38,58,.22);
+  --r:28px; --ease:cubic-bezier(.16,1,.3,1);
+  --font-d:"Inter Tight","Inter",system-ui,sans-serif;
+}
+html.v2, html.v2 body{background:#F3F8FB!important;color:var(--ink)!important}
+html.v2 body{font-feature-settings:"ss01","cv11"}
+html.lenis, html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-stopped{overflow:hidden}
+
+/* pozadí – měkké barevné skvrny, ať má sklo co rozmazávat */
+.v2-aura{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.v2-aura i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;will-change:transform}
+.v2-aura i:nth-child(1){width:46vw;height:46vw;left:-12vw;top:-8vw;background:radial-gradient(circle,#BFE4F6 0%,transparent 70%);animation:v2drift 26s ease-in-out infinite alternate}
+.v2-aura i:nth-child(2){width:40vw;height:40vw;right:-10vw;top:30vh;background:radial-gradient(circle,#CFE0FF 0%,transparent 70%);animation:v2drift 32s ease-in-out infinite alternate-reverse}
+.v2-aura i:nth-child(3){width:34vw;height:34vw;left:30vw;bottom:-14vw;background:radial-gradient(circle,#D8F1EC 0%,transparent 70%);animation:v2drift 38s ease-in-out infinite alternate}
+@keyframes v2drift{to{transform:translate3d(6vw,-4vh,0) scale(1.12)}}
+
+/* typografie */
+html.v2 h1, html.v2 h2{font-family:var(--font-d)!important;letter-spacing:-.035em!important;font-weight:650!important}
+html.v2 .g-h2{font-size:clamp(38px,4.2vw,72px)!important;line-height:1.02!important;text-transform:none!important}
+html.v2 .g-h2 em, html.v2 .g-accent{font-style:normal;background:linear-gradient(100deg,var(--imos) 10%,#2BA3D6 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+html.v2 h3{letter-spacing:-.02em!important}
+html.v2 .g-eyebrow{display:inline-flex;align-items:center;gap:10px;margin:0 0 18px;font:600 12px/1 var(--font-d);letter-spacing:.16em;text-transform:uppercase;color:var(--imos)}
+html.v2 .g-eyebrow::before{content:"";width:22px;height:1px;background:currentColor}
+
+/* hlavička – plovoucí skleněná lišta */
+html.v2 header.g-header{top:14px!important;left:50%!important;right:auto!important;transform:translateX(-50%);width:min(1640px,calc(100% - 28px))!important;height:72px!important;
+  border-radius:22px;background:rgba(255,255,255,.52)!important;border:1px solid var(--glass-line);
+  -webkit-backdrop-filter:blur(22px) saturate(170%)!important;backdrop-filter:blur(22px) saturate(170%)!important;box-shadow:var(--glass-shadow)!important;transition:background .4s var(--ease),transform .5s var(--ease)!important}
+html.v2 header.g-header > div{width:calc(100% - 40px)!important}
+html.v2 header.g-header.is-hidden{transform:translate(-50%,-120%)}
+html.v2 header.g-header.on-dark{background:rgba(4,38,58,.28)!important;border-color:rgba(255,255,255,.22)}
+html.v2 header.g-header.on-dark nav a, html.v2 header.g-header.on-dark nav{color:#fff!important}
+html.v2 header.g-header.on-dark nav > span{background:rgba(255,255,255,.4)!important}
+html.v2 header.g-header.on-dark img{filter:brightness(0) invert(1)}
+html.v2 header.g-header > nav{top:84px!important;border-radius:22px;border:1px solid var(--glass-line)!important;background:var(--glass-strong)!important;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+html.v2 header.g-header a[aria-label="Přihlášení"], html.v2 header.g-header button[aria-label="Menu"]{background:rgba(255,255,255,.6)!important;border-color:rgba(255,255,255,.8)!important}
+
+/* hero */
+html.v2 .g-hero{border-radius:0 0 40px 40px;min-height:820px!important}
+html.v2 .g-hero h1{font-size:clamp(52px,7vw,128px)!important;line-height:.95!important;font-weight:600!important;text-shadow:none!important;max-width:14ch}
+html.v2 .g-hero p{font-size:clamp(18px,1.4vw,22px)!important;line-height:1.5!important;opacity:.92}
+.v2-hero-stats{position:absolute;right:max(24px,calc((100% - 1600px)/2));bottom:56px;display:flex;gap:12px;z-index:3}
+.v2-stat{min-width:168px;padding:18px 22px;border-radius:22px;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);
+  -webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%)}
+.v2-stat b{display:block;font:600 40px/1 var(--font-d);letter-spacing:-.03em}
+.v2-stat span{display:block;margin-top:8px;font-size:14px;opacity:.82}
+@media (max-width:1100px){.v2-hero-stats{display:none}}
+
+/* plochy sekcí – místo tónovaných pruhů jemný přechod */
+html.v2 .g-tint{background:linear-gradient(180deg,rgba(234,245,251,0) 0%,rgba(222,239,248,.75) 18%,rgba(222,239,248,.75) 82%,rgba(234,245,251,0) 100%)!important}
+html.v2 section{position:relative}
+
+/* karty → sklo */
+html.v2 .g-card{background:var(--glass)!important;border:1px solid var(--glass-line)!important;border-radius:var(--r)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);box-shadow:var(--glass-shadow)!important}
+html.v2 a.g-card{transition:transform .6s var(--ease),box-shadow .6s var(--ease)!important}
+html.v2 a.g-card:hover{transform:translateY(-6px)!important;box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 34px 70px -24px rgba(4,38,58,.32)!important}
+html.v2 .g-media{border-radius:var(--r)!important}
+html.v2 .g-card .g-media, html.v2 .g-card > div:first-child{border-radius:0}
+html.v2 .g-pill{background:rgba(255,255,255,.72)!important;color:var(--imos)!important;border:1px solid rgba(255,255,255,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+html.v2 .g-pill.is-free{background:rgba(47,133,90,.78)!important;color:#fff!important;border-color:rgba(255,255,255,.35)}
+
+/* dlaždice kategorií – skleněný popisek místo plného modrého */
+html.v2 .g-tile-label{background:rgba(255,255,255,.18)!important;border:1px solid rgba(255,255,255,.4);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%)}
+html.v2 .g-tile-label{background:rgba(7,92,130,.55)!important}
+html.v2 .g-tile-label > span:first-child{background:rgba(255,255,255,.86)!important}
+
+/* tlačítka */
+html.v2 .g-btn{border-radius:999px!important;background:linear-gradient(135deg,#0A6E9B,var(--imos-dark))!important;box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 14px 30px -12px rgba(7,92,130,.6)!important;transition:transform .4s var(--ease),box-shadow .4s var(--ease),gap .3s var(--ease)!important}
+html.v2 .g-btn:hover{transform:translateY(-2px)}
+
+/* formuláře */
+html.v2 .g-card input:not([type=checkbox]):not([type=range]), html.v2 .g-card textarea{background:rgba(255,255,255,.7)!important;border-color:rgba(7,92,130,.16)!important;border-radius:14px!important}
+
+/* hodnoty – ikony v kruzích */
+html.v2 .g-icon{background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(214,236,247,.7))!important;border:1px solid #fff;box-shadow:var(--glass-shadow)}
+
+/* mapa */
+html.v2 .g-mapwrap{margin:0 auto!important;width:min(1640px,calc(100% - 28px));border-radius:36px;overflow:hidden;box-shadow:var(--glass-shadow)}
+html.v2 .leaflet-tile-pane{filter:none!important}
+html.v2 .leaflet-container{background:#E6EFF4!important}
+html.v2 .leaflet-control-zoom{border:none!important;border-radius:16px!important;overflow:hidden;box-shadow:var(--glass-shadow)!important}
+html.v2 .leaflet-control-zoom a{background:var(--glass-strong)!important;backdrop-filter:blur(14px);color:var(--imos)!important;border-color:rgba(7,92,130,.08)!important}
+html.v2 .leaflet-control-attribution{background:rgba(255,255,255,.55)!important;border-radius:10px 0 0 0;font-size:10px}
+html.v2 .g-map-legend, html.v2 .g-map-pop{background:var(--glass-strong)!important;border:1px solid var(--glass-line);-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%)}
+html.v2 .g-map-pop{border-radius:var(--r)!important}
+
+/* patička */
+html.v2 footer.g-footer{margin:0 14px 14px;border-radius:40px;background:radial-gradient(120% 140% at 0% 0%,#0A6E9B 0%,var(--imos-dark) 45%,var(--imos-deep) 100%)!important}
+
+/* přepínač verzí – vlevo dole */
+.v2-switch{position:fixed;left:18px;bottom:18px;z-index:5000;display:flex;align-items:center;gap:4px;padding:5px;border-radius:999px;
+  background:rgba(15,26,32,.62);border:1px solid rgba(255,255,255,.18);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:0 18px 40px -16px rgba(0,0,0,.45);font:600 13px/1 "Inter",system-ui,sans-serif}
+.v2-switch a{display:flex;align-items:center;gap:8px;height:36px;padding:0 16px;border-radius:999px;color:rgba(255,255,255,.78)!important;text-decoration:none;white-space:nowrap;transition:background .3s,color .3s}
+.v2-switch a:hover{color:#fff!important;background:rgba(255,255,255,.1)}
+.v2-switch a.is-on{background:#fff;color:var(--ink)!important}
+.v2-switch a.is-on::before{content:"";width:7px;height:7px;border-radius:50%;background:#2F855A;box-shadow:0 0 0 3px rgba(47,133,90,.2)}
+.v2-switch svg{opacity:.7}
+@media (max-width:560px){.v2-switch{left:10px;bottom:10px}.v2-switch a{padding:0 12px}}
+
+/* odhalování textu po řádcích */
+.split-line{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em}
+html.v2-motion [data-reveal]{opacity:0}
+html.v2-motion [data-reveal].v2-in{opacity:1}
+html.v2 .g-mapwrap.g-mapwrap--big{height:clamp(480px,72vh,760px)!important}
+
+/* kalendář dostupnosti zasedaček */
+.v2-cal{margin:0 0 32px;padding:40px;border-radius:var(--r);background:var(--glass);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:48px}
+@media (max-width:980px){.v2-cal{grid-template-columns:1fr;padding:24px;gap:32px}}
+.v2-cal h3{margin:0;font:650 28px/1.15 var(--font-d);letter-spacing:-.02em}
+.v2-cal__head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.v2-cal__nav{display:flex;gap:8px}
+.v2-cal__nav button{width:44px;height:44px;border-radius:50%;border:1px solid rgba(7,92,130,.16);background:rgba(255,255,255,.7);color:var(--imos);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .25s}
+.v2-cal__nav button:hover:not(:disabled){background:#fff}
+.v2-cal__nav button:disabled{opacity:.35;cursor:default}
+.v2-cal__month{font:600 15px/1 "Inter";color:var(--ink-2);text-transform:capitalize;margin-top:8px}
+.v2-cal__grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.v2-cal__dow{padding:6px 0 10px;text-align:center;font:600 12px/1 "Inter";letter-spacing:.08em;text-transform:uppercase;color:#6B767D}
+.v2-day{position:relative;height:clamp(44px,4.4vw,60px);border-radius:14px;border:1px solid transparent;background:rgba(255,255,255,.66);font:600 16px/1 "Inter";color:var(--ink);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:background .25s,border-color .25s,transform .25s var(--ease)}
+.v2-day:hover:not(:disabled){border-color:var(--imos);transform:translateY(-2px)}
+.v2-day i{width:6px;height:6px;border-radius:50%;background:#2F855A}
+.v2-day.is-part i{background:#D69E2E}
+.v2-day.is-full{background:rgba(220,225,228,.45);color:#9AA3A8;cursor:not-allowed}
+.v2-day.is-full i{background:#C2CACF}
+.v2-day:disabled{background:transparent;color:#B8C0C4;cursor:default}
+.v2-day:disabled i{display:none}
+.v2-day.is-sel{background:linear-gradient(135deg,#0A6E9B,var(--imos-dark));color:#fff;border-color:transparent}
+.v2-day.is-sel i{background:#fff}
+.v2-day.is-today::after{content:"";position:absolute;inset:3px;border-radius:11px;border:1px dashed rgba(7,92,130,.4);pointer-events:none}
+.v2-cal__legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;font-size:14px;color:var(--ink-2)}
+.v2-cal__legend span{display:flex;align-items:center;gap:8px}
+.v2-cal__legend i{width:8px;height:8px;border-radius:50%}
+.v2-slots{display:flex;flex-direction:column;gap:10px}
+.v2-slot{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:0 20px;border-radius:18px;border:1px solid rgba(7,92,130,.14);background:rgba(255,255,255,.7);
+  font:600 17px/1.2 "Inter";color:var(--ink);cursor:pointer;text-align:left;transition:border-color .25s,background .25s,transform .25s var(--ease)}
+.v2-slot small{display:block;margin-top:4px;font-weight:500;font-size:13px;color:#6B767D}
+.v2-slot b{font-weight:600;font-size:13px;padding:6px 12px;border-radius:999px;background:rgba(47,133,90,.12);color:#2F855A;white-space:nowrap}
+.v2-slot:hover:not(:disabled){border-color:var(--imos);transform:translateX(3px)}
+.v2-slot:disabled{cursor:not-allowed;opacity:.55}
+.v2-slot:disabled b{background:rgba(107,118,125,.14);color:#6B767D}
+.v2-slot.is-sel{border-color:var(--imos);background:#fff;box-shadow:0 0 0 3px rgba(7,92,130,.14)}
+.v2-pick{margin-top:20px;padding:18px 20px;border-radius:18px;background:rgba(7,92,130,.08);font-size:15px;line-height:1.5;color:var(--ink-2)}
+.v2-pick strong{color:var(--ink)}
+.v2-pick a{display:inline-flex;margin-top:12px;align-items:center;gap:8px;height:48px;padding:0 22px;border-radius:999px;color:#fff!important;font-weight:600;background:linear-gradient(135deg,#0A6E9B,var(--imos-dark))}
+
+/* výpis zasedaček – výběr dne a časů */
+.v2-when{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 28px;padding:14px;border-radius:24px;background:var(--glass);border:1px solid var(--glass-line);box-shadow:var(--glass-shadow);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.v2-when > b{padding:0 8px 0 10px;font:600 15px/1 "Inter";white-space:nowrap}
+.v2-when__days{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;flex:1 1 400px;padding:2px}
+.v2-when__days::-webkit-scrollbar{display:none}
+.v2-when__days button, .v2-when__slots button{flex:none;border:1px solid rgba(7,92,130,.14);background:rgba(255,255,255,.72);border-radius:16px;cursor:pointer;color:var(--ink);transition:all .25s var(--ease)}
+.v2-when__days button{width:58px;height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:600 18px/1 "Inter"}
+.v2-when__days button small{font:600 11px/1 "Inter";letter-spacing:.06em;text-transform:uppercase;color:#6B767D}
+.v2-when__slots{display:flex;gap:8px;flex-wrap:wrap}
+.v2-when__slots button{height:44px;padding:0 16px;border-radius:999px;font:600 14px/1 "Inter"}
+.v2-when button.is-on{background:linear-gradient(135deg,#0A6E9B,var(--imos-dark));color:#fff;border-color:transparent}
+.v2-when button.is-on small{color:rgba(255,255,255,.75)}
+.v2-avail{position:absolute;right:20px;top:20px;z-index:2;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;font:600 13px/1 "Inter";color:#fff;
+  background:rgba(47,133,90,.8);border:1px solid rgba(255,255,255,.35);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.v2-avail::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff}
+.v2-avail.is-busy{background:rgba(60,70,76,.72)}
+
+@media (prefers-reduced-motion:reduce){.v2-aura i{animation:none}}
