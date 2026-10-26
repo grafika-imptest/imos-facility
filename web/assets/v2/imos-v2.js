@@ -172,12 +172,13 @@
   }
 
   /* ---------- hlavička: tmavá nad hero, schovat při scrollu dolů ---------- */
+  // prvky se hledají při každém volání – šablona může stránku vykreslovat postupně a hero dorazit až po startu
   function headerBehaviour() {
-    const hd = document.querySelector('.g-header');
-    if (!hd) return;
-    const heroEl = document.querySelector('.g-hero');
+    if (headerBehaviour.upd) return headerBehaviour.upd();
     let last = scrollY;
-    const upd = () => {
+    const upd = headerBehaviour.upd = () => {
+      const hd = document.querySelector('.g-header'), heroEl = document.querySelector('.g-hero');
+      if (!hd) return;
       const y = scrollY;
       hd.classList.toggle('on-dark', !!heroEl && y < heroEl.offsetHeight - 120);
       const menuOpen = !!hd.querySelector(':scope > nav');
@@ -400,8 +401,8 @@
       if (list.every(m => own(m.target))) return;
       clearTimeout(t);
       t = setTimeout(() => {
-        tag(document);
-        if (calendarList.badges) calendarList.badges();
+        tag(document); hero(); headerBehaviour(); calendarDetail();
+        if (calendarList.badges) calendarList.badges(); else calendarList();
         if (window.gsap && window.ScrollTrigger) { if (reveal(document)) window.ScrollTrigger.refresh(); }
         else if (reduce || !html.classList.contains('v2-motion')) document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('v2-in'));
       }, 80);
