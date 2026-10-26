@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "imos-preview", "runtimeExecutable": "node", "runtimeArgs": ["serve.mjs", "5340"], "port": 5340 }
+  ]
+}

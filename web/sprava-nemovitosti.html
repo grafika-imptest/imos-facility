@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Správa nemovitostí v Brně – IMOS facility</title>
+<meta name="description" content="Správa nemovitostí v Brně – IMOS facility, a.s. zastřešuje všechny činnosti, které souvisejí s provozováním budov.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Správa nemovitostí v Brně – IMOS facility</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+html{scroll-behavior:smooth}
+html,body{margin:0;padding:0;background:#fff;color:#14191C;font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#075C82;text-decoration:none}
+a:hover{color:#053F5A}
+input,textarea,button{font-family:inherit}
+.leaflet-tile-pane{filter:grayscale(1) brightness(1.06) contrast(0.92)}
+.leaflet-container{font-family:"Inter",system-ui,sans-serif;background:#EEF1F3}
+@keyframes imosDot{0%{opacity:0;transform:translateY(0)}18%{opacity:1;transform:translateY(0)}80%{opacity:0;transform:translateY(14px)}100%{opacity:0;transform:translateY(0)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+input[data-cap-range]::-webkit-slider-runnable-track{height:4px;background:transparent}
+input[data-cap-range]::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;cursor:pointer;width:20px;height:20px;margin-top:-8px;border-radius:50%;background:#075C82;border:3px solid #fff;box-shadow:0 1px 4px rgba(13,26,38,0.3)}
+input[data-cap-range]::-moz-range-track{height:4px;background:transparent}
+input[data-cap-range]::-moz-range-thumb{pointer-events:auto;cursor:pointer;width:14px;height:14px;border-radius:50%;background:#075C82;border:3px solid #fff;box-shadow:0 1px 4px rgba(13,26,38,0.3)}
+input[data-cap-range]:focus{outline:none}
+input[data-cap-range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px rgba(7,92,130,0.25)}
+</style>
+</helmet>
+
+<header data-screen-label="Header" style="position:fixed;top:0;left:0;right:0;z-index:2000;height:88px;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);background:{{ headerBg }};box-shadow:{{ headerShadow }};transition:background 300ms ease, box-shadow 300ms ease">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;gap:32px">
+    <a href="index.html" aria-label="IMOS facility – úvod" style="display:flex;align-items:center"><img src="assets/loga/imos-facility-logo.png" alt="IMOS facility" style="height:44px;width:auto;display:block"></a>
+    <div style="display:flex;align-items:center;gap:clamp(14px,1.7vw,32px);flex:none">
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+    <nav style="display:flex;align-items:center;gap:clamp(14px,1.7vw,32px);font-weight:600;font-size:clamp(15px,0.9vw,17px);line-height:24px;white-space:nowrap">
+      <a href="pronajem-nemovitosti.html" style="color:#14191C;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:left bottom;background-size:0% 2px;padding-bottom:4px;transition:background-size 250ms cubic-bezier(0.22,1,0.36,1), color 200ms ease-out" style-hover="color:#14191C;background-size:100% 2px">Pronájem nemovitostí</a>
+      <a href="zasedaci-mistnosti.html" style="color:#14191C;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:left bottom;background-size:0% 2px;padding-bottom:4px;transition:background-size 250ms cubic-bezier(0.22,1,0.36,1), color 200ms ease-out" style-hover="color:#14191C;background-size:100% 2px">Zasedací místnosti</a>
+      <a href="sprava-nemovitosti.html" style="color:#075C82;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:left bottom;background-size:100% 2px;padding-bottom:4px;transition:background-size 250ms cubic-bezier(0.22,1,0.36,1), color 200ms ease-out" style-hover="color:#14191C;background-size:100% 2px">Správa nemovitostí</a>
+      <span style="width:1px;height:24px;background:#6B767D"></span>
+      <a href="o-nas.html" style="color:#14191C;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:left bottom;background-size:0% 2px;padding-bottom:4px;transition:background-size 250ms cubic-bezier(0.22,1,0.36,1), color 200ms ease-out" style-hover="color:#14191C;background-size:100% 2px">O nás</a>
+      <a href="kontakt.html" style="color:#14191C;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:left bottom;background-size:0% 2px;padding-bottom:4px;transition:background-size 250ms cubic-bezier(0.22,1,0.36,1), color 200ms ease-out" style-hover="color:#14191C;background-size:100% 2px">Kontakt</a>
+      <a href="https://www.imos-development.cz" target="_blank" rel="noopener" style="color:#14191C;display:flex;align-items:center;gap:6px;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:left bottom;background-size:0% 2px;padding-bottom:4px;transition:background-size 250ms cubic-bezier(0.22,1,0.36,1), color 200ms ease-out" style-hover="color:#C80225;background-size:100% 2px">Prodej nemovitostí
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+      </a>
+</nav>
+    </sc-if>
+      <a href="#" onClick="{{ openLogin }}" aria-label="Přihlášení" style="width:44px;height:44px;border-radius:999px;border:1px solid #DCE1E4;display:flex;align-items:center;justify-content:center;color:#075C82;background:#fff;transition:background 200ms ease-out, color 200ms ease-out" style-hover="background:#075C82;color:#fff">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path></svg>
+      </a>
+          <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ toggleMenu }}" aria-label="Menu" style="width:44px;height:44px;border-radius:999px;border:1px solid #DCE1E4;background:#fff;color:#14191C;display:flex;align-items:center;justify-content:center;cursor:pointer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+      </button>
+      </sc-if>
+    </div>
+  </div>
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <nav style="position:absolute;top:88px;left:0;right:0;background:#fff;border-top:1px solid #DCE1E4;box-shadow:0 16px 40px rgba(13,26,38,0.14);padding:16px 24px 24px;display:flex;flex-direction:column;font-weight:600;font-size:17px;line-height:24px">
+      <a href="pronajem-nemovitosti.html" style="padding:12px 0;color:#14191C;text-underline-offset:6px;text-decoration-thickness:2px" style-hover="text-decoration:underline">Pronájem nemovitostí</a>
+      <a href="zasedaci-mistnosti.html" style="padding:12px 0;color:#14191C;text-underline-offset:6px;text-decoration-thickness:2px" style-hover="text-decoration:underline">Zasedací místnosti</a>
+      <a href="sprava-nemovitosti.html" style="padding:12px 0;color:#14191C;text-underline-offset:6px;text-decoration-thickness:2px" style-hover="text-decoration:underline">Správa nemovitostí</a>
+      <span style="height:1px;background:#DCE1E4;margin:8px 0"></span>
+      <a href="o-nas.html" style="padding:12px 0;color:#14191C;text-underline-offset:6px;text-decoration-thickness:2px" style-hover="text-decoration:underline">O nás</a>
+      <a href="kontakt.html" style="padding:12px 0;color:#14191C;text-underline-offset:6px;text-decoration-thickness:2px" style-hover="text-decoration:underline">Kontakt</a>
+      <a href="https://www.imos-development.cz" target="_blank" rel="noopener" style="padding:12px 0;color:#14191C;display:flex;align-items:center;gap:6px;transition:color 200ms ease-out;text-underline-offset:6px;text-decoration-thickness:2px" style-hover="color:#C80225;text-decoration:underline">Prodej nemovitostí
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+      </a>
+</nav>
+  </sc-if>
+</header>
+
+<main>
+<section data-screen-label="Úvod" style="padding:128px 0 96px;background:#EAF5FB">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto">
+    <nav aria-label="Drobečková navigace" style="display:flex;align-items:center;gap:10px;font-size:14px;line-height:22px;color:#3A4349">
+      <a href="index.html" style="color:#075C82" style-hover="color:#075C82;text-decoration:underline">Úvod</a>
+      <span style="color:#6B767D">/</span>
+      <span>Správa nemovitostí v&nbsp;Brně</span>
+    </nav>
+    <div style="margin-top:32px;display:flex;flex-wrap:wrap;align-items:center;gap:48px 96px">
+      <div style="flex:0 1 760px;min-width:0">
+        <h1 data-reveal="text" style="margin:0;color:#14191C;font-weight:600;font-size:clamp(40px,3.4vw,64px);line-height:1.12;letter-spacing:-0.015em;text-wrap:balance">Správa nemovitostí v&nbsp;Brně</h1>
+        <div data-reveal="text" data-delay="80" style="margin-top:12px">
+          <p style="margin:16px 0 0;font-size:18px;line-height:30px;color:#3A4349;text-wrap:pretty"><strong style="font-weight:600;color:#14191C">Správa nemovitostí</strong> je jedním z&nbsp;klíčových pilířů naší společnosti. Zajišťujeme plynulý a&nbsp;bezpečný provoz budov a&nbsp;pronajímaných prostor a&nbsp;<strong style="font-weight:600;color:#14191C">aktivně řešíme technické, provozní i&nbsp;administrativní záležitosti</strong>.</p>
+          <p style="margin:16px 0 0;font-size:18px;line-height:30px;color:#3A4349;text-wrap:pretty">Nabízíme komplexní služby pro <strong style="font-weight:600;color:#14191C">nemovitosti, bytové domy a&nbsp;budovy</strong> – od ekonomického a&nbsp;právního servisu přes revize, účetnictví a&nbsp;úklid až po havarijní nebo hygienický servis.</p>
+        </div>
+      </div>
+      <div data-reveal="media" style="flex:0 1 420px;min-width:0;margin-left:auto;background:#fff;border-radius:12px;padding:24px 28px">
+        <h2 style="margin:0 0 8px;font-weight:700;font-size:24px;line-height:32px;color:#14191C">Hlavní oblasti</h2>
+        <div style="display:flex;flex-direction:column">
+          <a href="#revize" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;font-weight:500;font-size:15px;line-height:22px;color:#14191C;transition:color 200ms ease-out, padding 200ms ease-out" style-hover="color:#075C82;padding-left:6px"><span>Revize a&nbsp;kontroly</span><span style="flex:none;width:28px;height:28px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 5v14M6 13l6 6 6-6"></path></svg></span></a>
+          <a href="#udrzba" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid #DCE1E4;font-weight:500;font-size:15px;line-height:22px;color:#14191C;transition:color 200ms ease-out, padding 200ms ease-out" style-hover="color:#075C82;padding-left:6px"><span>Údržba a&nbsp;opravy</span><span style="flex:none;width:28px;height:28px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 5v14M6 13l6 6 6-6"></path></svg></span></a>
+          <a href="#energie" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid #DCE1E4;font-weight:500;font-size:15px;line-height:22px;color:#14191C;transition:color 200ms ease-out, padding 200ms ease-out" style-hover="color:#075C82;padding-left:6px"><span>Energie a&nbsp;úspory</span><span style="flex:none;width:28px;height:28px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 5v14M6 13l6 6 6-6"></path></svg></span></a>
+          <a href="#evidence" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid #DCE1E4;font-weight:500;font-size:15px;line-height:22px;color:#14191C;transition:color 200ms ease-out, padding 200ms ease-out" style-hover="color:#075C82;padding-left:6px"><span>Evidence a&nbsp;dokumentace</span><span style="flex:none;width:28px;height:28px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 5v14M6 13l6 6 6-6"></path></svg></span></a>
+          <a href="#ucetnictvi" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid #DCE1E4;font-weight:500;font-size:15px;line-height:22px;color:#14191C;transition:color 200ms ease-out, padding 200ms ease-out" style-hover="color:#075C82;padding-left:6px"><span>Administrativa a&nbsp;účetnictví</span><span style="flex:none;width:28px;height:28px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 5v14M6 13l6 6 6-6"></path></svg></span></a>
+          <a href="#uklid" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid #DCE1E4;font-weight:500;font-size:15px;line-height:22px;color:#14191C;transition:color 200ms ease-out, padding 200ms ease-out" style-hover="color:#075C82;padding-left:6px"><span>Úklid a&nbsp;údržba zeleně</span><span style="flex:none;width:28px;height:28px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 5v14M6 13l6 6 6-6"></path></svg></span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Správa – úvod" style="padding:120px 0 32px">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto;text-align:center">
+    <h2 data-reveal="text" style="margin:0;font-weight:800;font-size:52px;line-height:60px;letter-spacing:-0.005em">Správa nemovitostí</h2>
+    <p data-reveal="text" data-delay="80" style="margin:16px auto 0;max-width:760px;font-size:18px;line-height:28px;color:#3A4349">Oddělení správy nemovitostí zastřešuje všechny činnosti, které souvisejí s&nbsp;provozováním budov.</p>
+  </div>
+</section>
+
+<section id="revize" data-screen-label="Správa 1" style="padding:64px 0;scroll-margin-top:72px">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:40px 96px;flex-direction:row">
+    <div data-reveal="media" style="flex:0 1 calc(50% - 48px);min-width:min(100%, 420px);height:clamp(300px, 26vw, 440px);border-radius:16px;overflow:hidden;background:#DCE1E4">
+      <img src="assets/foto/sprava-chodba-babak.jpg" alt="Chodba v areálu Babák office" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div data-reveal="text" style="flex:0 1 640px;min-width:0">
+      <h3 style="margin:0;font-weight:700;font-size:28px;line-height:36px">Revize, kontroly, prohlídky</h3><p style="margin:16px 0 0;font-size:18px;line-height:30px;color:#3A4349;text-wrap:pretty">Zajišťujeme sledování a&nbsp;provádění všech <strong style="font-weight:600;color:#14191C">zákonem předepsaných revizí</strong>, pravidelných kontrol a&nbsp;servisních prohlídek společných prostor a&nbsp;technologických zařízení (elektroinstalace, hromosvody, spalinové cesty, výtahy, rozvody požární vody apod.). Součástí našich služeb je rovněž <strong style="font-weight:600;color:#14191C">odstranění zjištěných závad</strong> a&nbsp;zajištění pravidelných kontrol v&nbsp;oblasti požární ochrany (PO) a&nbsp;bezpečnosti práce (BOZP).</p>
+    </div>
+  </div>
+</section>
+
+<section id="udrzba" data-screen-label="Správa 2" style="padding:64px 0;scroll-margin-top:72px">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:40px 96px;flex-direction:row-reverse">
+    <div data-reveal="media" style="flex:0 1 calc(50% - 48px);min-width:min(100%, 420px);height:clamp(300px, 26vw, 440px);border-radius:16px;overflow:hidden;background:#DCE1E4">
+      <img src="assets/foto/sprava-kancelar-babak.jpg" alt="Kancelář v areálu Babák office" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div data-reveal="text" style="flex:0 1 640px;min-width:0">
+      <h3 style="margin:0;font-weight:700;font-size:28px;line-height:36px">Údržba a&nbsp;opravy</h3><p style="margin:16px 0 0;font-size:18px;line-height:30px;color:#3A4349;text-wrap:pretty">Provádíme dohled nad <strong style="font-weight:600;color:#14191C">technickým stavem nemovitosti</strong> a&nbsp;jejím vybavením. Kontrolujeme úplnost provozní a&nbsp;technické dokumentace, navrhujeme a&nbsp;realizujeme drobné opravy i&nbsp;větší rekonstrukce podle schválených plánů a&nbsp;výběrových řízení. Na základě požadavků vlastníků (SVJ) zajišťujeme také výběrová řízení na dodavatele služeb.</p>
+    </div>
+  </div>
+</section>
+
+<section id="energie" data-screen-label="Správa 3" style="padding:64px 0;scroll-margin-top:72px">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:40px 96px;flex-direction:row">
+    <div data-reveal="media" style="flex:0 1 calc(50% - 48px);min-width:min(100%, 420px);height:clamp(300px, 26vw, 440px);border-radius:16px;overflow:hidden;background:#DCE1E4">
+      <img src="assets/foto/sprava-sklad-hudcova.jpg" alt="Sklad v areálu Hudcova" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div data-reveal="text" style="flex:0 1 640px;min-width:0">
+      <h3 style="margin:0;font-weight:700;font-size:28px;line-height:36px">Energie, média a&nbsp;provozní služby</h3><p style="margin:16px 0 0;font-size:18px;line-height:30px;color:#3A4349;text-wrap:pretty">Provádíme pravidelné vyhodnocení <strong style="font-weight:600;color:#14191C">spotřeby energií</strong> a&nbsp;navrhujeme <strong style="font-weight:600;color:#14191C">úsporná opatření</strong>. Zajišťujeme smluvní dodávky všech nezbytných médií a&nbsp;služeb, jako jsou:</p><ul style="margin:20px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 260px), 1fr));gap:8px 32px">
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Elektřina, plyn, voda</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Odvoz komunálního odpadu</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Ostraha objektu</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Úklidové služby</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Údržba a&nbsp;úprava zeleně</span></li>
+          </ul>
+    </div>
+  </div>
+</section>
+
+<section id="evidence" data-screen-label="Správa 4" style="padding:64px 0;scroll-margin-top:72px">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:40px 96px;flex-direction:row-reverse">
+    <div data-reveal="media" style="flex:0 1 calc(50% - 48px);min-width:min(100%, 420px);height:clamp(300px, 26vw, 440px);border-radius:16px;overflow:hidden;background:#DCE1E4">
+      <img src="assets/foto/detail-babak-06-kancelar.jpg" alt="Kancelář v areálu Babák office" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div data-reveal="text" style="flex:0 1 640px;min-width:0">
+      <h3 style="margin:0;font-weight:700;font-size:28px;line-height:36px">Evidence a&nbsp;technická dokumentace</h3><p style="margin:16px 0 0;font-size:18px;line-height:30px;color:#3A4349;text-wrap:pretty">Vedeme kompletní <strong style="font-weight:600;color:#14191C">evidenci spojenou se správou nemovitosti</strong>, včetně:</p><ul style="margin:20px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px">
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Evidence vlastníků jednotek a&nbsp;nájemců</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Evidence pro roční vyúčtování služeb</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Dokumentace technického stavu objektu a&nbsp;její průběžná aktualizace</span></li>
+          </ul>
+      <div style="margin-top:32px"><h3 style="margin:0;font-weight:700;font-size:28px;line-height:36px">Administrativa</h3><ul style="margin:20px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px">
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>vyřizování dohodnuté korespondence</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>archivace písemností a&nbsp;dokumentace</span></li>
+          </ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="ucetnictvi" data-screen-label="Správa 5" style="padding:64px 0;scroll-margin-top:72px">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:40px 96px;flex-direction:row">
+    <div data-reveal="media" style="flex:0 1 calc(50% - 48px);min-width:min(100%, 420px);height:clamp(300px, 26vw, 440px);border-radius:16px;overflow:hidden;background:#DCE1E4">
+      <img src="assets/foto/o-nas-babak-recepce.jpg" alt="Recepce v areálu Babák office" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div data-reveal="text" style="flex:0 1 640px;min-width:0">
+      <h3 style="margin:0;font-weight:700;font-size:28px;line-height:36px">Účetnictví a&nbsp;ekonomický servis</h3><p style="margin:16px 0 0;font-size:18px;line-height:30px;color:#3A4349;text-wrap:pretty"><strong style="font-weight:600;color:#14191C">Nabízíme komplexní vedení účetnictví včetně:</strong></p><ul style="margin:20px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 260px), 1fr));gap:8px 32px">
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Zajištění vedení účetnictví</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Zpracování a&nbsp;kontrola přijatých faktur</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Úhrady faktur po schválení SVJ</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Komunikace s&nbsp;bankovními institucemi</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Roční účetní uzávěrka a&nbsp;roční vyúčtování pro členy SVJ</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Organizace schůzí a&nbsp;zastupování SVJ v&nbsp;souvisejících záležitostech</span></li>
+          </ul>
+    </div>
+  </div>
+</section>
+
+<section id="uklid" data-screen-label="Správa 6" style="padding:64px 0;scroll-margin-top:72px">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:40px 96px;flex-direction:row-reverse">
+    <div data-reveal="media" style="flex:0 1 calc(50% - 48px);min-width:min(100%, 420px);height:clamp(300px, 26vw, 440px);border-radius:16px;overflow:hidden;background:#DCE1E4">
+      <img src="assets/foto/detail-babak-07-kuchynka.jpg" alt="Kuchyňka v areálu Babák office" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div data-reveal="text" style="flex:0 1 640px;min-width:0">
+      <h3 style="margin:0;font-weight:700;font-size:28px;line-height:36px">Úklidové služby a&nbsp;údržba zeleně</h3><p style="margin:16px 0 0;font-size:18px;line-height:30px;color:#3A4349;text-wrap:pretty">Součástí <strong style="font-weight:600;color:#14191C">správy nemovitostí</strong> je i&nbsp;specializované <strong style="font-weight:600;color:#14191C">oddělení úklidových služeb</strong>. Naši pracovníci zajišťují čisté a&nbsp;příjemné prostředí v&nbsp;souladu s&nbsp;potřebami nájemců.</p><ul style="margin:20px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 260px), 1fr));gap:8px 32px">
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Rozsah, četnost a&nbsp;harmonogram úklidu přizpůsobujeme požadavkům zákazníka</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Používáme moderní úklidové technologie a&nbsp;šetrné čisticí prostředky</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Máme vlastní technické zázemí a&nbsp;spolehlivý personál</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Zajišťujeme doplňování hygienických potřeb</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>Při údržbě venkovní zeleně se staráme i&nbsp;o likvidaci rostlinného odpadu</span></li>
+          </ul>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Správa 7" style="padding:64px 0">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:40px 96px;flex-direction:row">
+    <div data-reveal="media" style="flex:0 1 calc(50% - 48px);min-width:min(100%, 420px);height:clamp(300px, 26vw, 440px);border-radius:16px;overflow:hidden;background:#DCE1E4">
+      <img src="assets/foto/detail-babak-03-exterier-vchod.jpg" alt="Vchod do areálu Babák office" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div data-reveal="text" style="flex:0 1 640px;min-width:0">
+      <h3 style="margin:0;font-weight:700;font-size:28px;line-height:36px">Naše služby</h3><ul style="margin:20px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 260px), 1fr));gap:8px 32px">
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>úklid garážových prostor (úklid velkých vnitřních ploch)</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>úklid bytových domů</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>úklid kancelářských prostor</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>pronájem obchodních prostor</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>úklid obchodních prostor</span></li>
+            <li style="display:flex;align-items:flex-start;gap:12px;font-weight:500;font-size:17px;line-height:26px"><span style="flex:none;margin-top:3px;width:20px;height:20px;border-radius:999px;background:#075C82;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span><span>úklid sportovních prostor</span></li>
+          </ul>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Závěr" style="padding:24px 0 96px">
+  <p data-reveal="text" style="width:min(1600px, calc(100% - 48px));margin:0 auto;text-align:center;font-weight:600;font-size:22px;line-height:32px;color:#14191C;text-wrap:balance">Díky našim odborným znalostem, zkušenostem a&nbsp;profesionálnímu přístupu jsme spolehlivým partnerem pro správu majetku.</p>
+</section>
+
+<section data-screen-label="Vedoucí správy" style="padding:0 0 120px">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto">
+    <div data-reveal="media" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:32px 64px;border:1px solid #DCE1E4;border-radius:16px;padding:48px">
+      <div>
+        <p style="margin:0;font-weight:600;font-size:13px;line-height:16px;letter-spacing:0.08em;text-transform:uppercase;color:#075C82">Kontakt na úsek správy</p>
+        <h2 style="margin:14px 0 0;font-weight:700;font-size:36px;line-height:44px">Ing. Ivan Pejta</h2>
+        <p style="margin:6px 0 0;font-size:18px;line-height:28px;color:#3A4349">Vedoucí správy nemovitostí</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px 40px;align-items:center">
+        <a href="tel:+420724946604" style="display:flex;align-items:center;gap:14px;font-weight:600;font-size:20px;line-height:28px;color:#14191C" style-hover="color:#075C82">
+          <span style="flex:none;width:48px;height:48px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"></path></svg></span>+420 724 946 604</a>
+        <a href="mailto:pejta@imosfacility.cz" style="display:flex;align-items:center;gap:14px;font-weight:600;font-size:20px;line-height:28px;color:#14191C" style-hover="color:#075C82">
+          <span style="flex:none;width:48px;height:48px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg></span>pejta@imosfacility.cz</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="kontakt" data-screen-label="Kontakt" style="padding:120px 0;background:#EAF5FB">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto">
+    <div style="margin-bottom:56px">
+      <h2 data-reveal="text" style="margin:0;font-weight:800;font-size:52px;line-height:60px;letter-spacing:-0.005em;max-width:1100px;text-wrap:balance">HLEDÁTE KONKRÉTNÍ NEMOVITOST K&nbsp;PRONÁJMU?</h2>
+      <p data-reveal="text" data-delay="80" style="margin:16px 0 0;font-size:18px;line-height:28px;color:#3A4349">Ozvěte se nám, pomůžeme vám najít jakékoliv prostory v&nbsp;Brně.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 560px), 1fr));gap:32px;align-items:stretch">
+      <div data-reveal="media" style="background:#fff;border-radius:16px;padding:48px">
+        <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+          <div style="min-height:420px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:16px">
+            <span style="width:64px;height:64px;border-radius:999px;background:#2F855A;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span>
+            <h3 style="margin:0;font-weight:700;font-size:28px;line-height:36px">Děkujeme, ozveme se vám.</h3>
+            <button onClick="{{ resetForm }}" style="border:none;background:none;padding:0;color:#075C82;font-weight:600;font-size:16px;cursor:pointer">Odeslat další poptávku</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ submit }}" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:24px">
+            <label style="display:flex;flex-direction:column;gap:8px;grid-column:1 / -1;font-weight:600;font-size:15px;line-height:24px">Jméno a příjmení *
+              <input required type="text" style="height:56px;padding:0 20px;border-radius:8px;border:1px solid #DCE1E4;font-size:16px;color:#14191C;background:#fff;outline:none;transition:border-color 200ms ease-out" style-focus="border-color:#075C82;box-shadow:0 0 0 3px rgba(7,92,130,0.15)">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:8px;font-weight:600;font-size:15px;line-height:24px">Telefon *
+              <input required type="tel" style="height:56px;padding:0 20px;border-radius:8px;border:1px solid #DCE1E4;font-size:16px;color:#14191C;background:#fff;outline:none" style-focus="border-color:#075C82;box-shadow:0 0 0 3px rgba(7,92,130,0.15)">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:8px;font-weight:600;font-size:15px;line-height:24px">E-mail *
+              <input required type="email" style="height:56px;padding:0 20px;border-radius:8px;border:1px solid #DCE1E4;font-size:16px;color:#14191C;background:#fff;outline:none" style-focus="border-color:#075C82;box-shadow:0 0 0 3px rgba(7,92,130,0.15)">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:8px;grid-column:1 / -1;font-weight:600;font-size:15px;line-height:24px">Co pro vás můžeme udělat?
+              <textarea rows="5" style="padding:16px 20px;border-radius:8px;border:1px solid #DCE1E4;font-size:16px;line-height:26px;color:#14191C;background:#fff;outline:none;resize:vertical" style-focus="border-color:#075C82;box-shadow:0 0 0 3px rgba(7,92,130,0.15)"></textarea>
+            </label>
+            <label style="grid-column:1 / -1;display:flex;align-items:center;gap:12px;font-size:16px;line-height:26px;color:#14191C;cursor:pointer">
+              <input required type="checkbox" style="width:22px;height:22px;accent-color:#075C82;margin:0">Potvrďte, že jste člověk
+            </label>
+            <div style="grid-column:1 / -1;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+              <p style="margin:0;font-size:14px;line-height:22px;color:#3A4349">O vaše data je u&nbsp;nás postaráno. <a href="#" style="color:#075C82;text-decoration:underline;text-underline-offset:3px">Zásady ochrany osobních údajů</a></p>
+              <button type="submit" style="display:inline-flex;align-items:center;gap:8px;height:56px;padding:0 28px;border-radius:999px;border:none;background:#075C82;color:#fff;font-weight:600;font-size:16px;line-height:24px;cursor:pointer;transition:background 200ms ease-out, gap 200ms ease-out, padding 200ms ease-out" style-hover="background:#053F5A;gap:14px;padding:0 22px 0 28px">Odeslat poptávku
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+              </button>
+            </div>
+          </form>
+        </sc-if>
+      </div>
+      <div data-reveal="media" data-delay="100" style="background:#fff;border-radius:16px;overflow:hidden;display:flex;flex-direction:column">
+        <div style="padding:48px 48px 32px">
+          <h3 style="margin:0;font-weight:700;font-size:28px;line-height:36px">IMOS facility, a.s.</h3>
+          <div style="margin-top:24px;display:flex;flex-direction:column;gap:14px">
+            <a href="tel:+420533432111" style="display:flex;align-items:center;gap:14px;font-weight:600;font-size:18px;line-height:28px;color:#14191C" style-hover="color:#075C82">
+              <span style="flex:none;width:40px;height:40px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"></path></svg></span>+420 533 432 111</a>
+            <a href="mailto:spravam@imosfacility.cz" style="display:flex;align-items:center;gap:14px;font-weight:600;font-size:18px;line-height:28px;color:#14191C" style-hover="color:#075C82">
+              <span style="flex:none;width:40px;height:40px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg></span>spravam@imosfacility.cz</a>
+            <p style="margin:0;display:flex;align-items:center;gap:14px;font-size:16px;line-height:26px;color:#3A4349">
+              <span style="flex:none;width:40px;height:40px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></span>Gajdošova 4392/7, 615 00 Brno - Židenice</p>
+          </div>
+          <div style="margin-top:24px;padding-top:20px;border-top:1px solid #DCE1E4;font-size:14px;line-height:22px;color:#6B767D">
+            <p style="margin:0">Spisová značka: oddíl B, vložka 4018, vedeno v&nbsp;Krajského soudu v&nbsp;Brně</p>
+            <p style="margin:4px 0 0">Číslo datové schránky : eybeh7e</p>
+          </div>
+        </div>
+        <div ref="{{ miniMapRef }}" style="flex:1;min-height:240px;background:#EEF1F3;position:relative;z-index:1"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Hodnoty" style="padding:120px 0">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:48px 32px">
+      <div data-reveal="text" data-delay="0" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px">
+        <span style="flex:none;width:108px;height:108px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M4 18h16"></path><path d="M6 18v-7"></path><path d="M10 18v-7"></path><path d="M14 18v-7"></path><path d="M18 18v-7"></path><path d="M12 3l9 5H3z"></path></svg></span>
+        <div><h4 style="margin:0;font-weight:700;font-size:26px;line-height:34px">Jistota</h4><p style="margin:16px auto 0;max-width:280px;font-size:16px;line-height:26px;color:#3A4349">Jsme stabilní firma s&nbsp;vlastním kapitálem.</p></div>
+      </div>
+      <div data-reveal="text" data-delay="80" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px">
+        <span style="flex:none;width:108px;height:108px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path><path d="M9 15.5l2 2 4-4"></path></svg></span>
+        <div><h4 style="margin:0;font-weight:700;font-size:26px;line-height:34px">Tradice</h4><p style="margin:16px auto 0;max-width:280px;font-size:16px;line-height:26px;color:#3A4349">Na realitním trhu působíme přes 20 let.</p></div>
+      </div>
+      <div data-reveal="text" data-delay="160" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px">
+        <span style="flex:none;width:108px;height:108px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l2 2a1 1 0 1 0 3-3"></path><path d="M14 14l2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"></path><path d="M21 3l1 11h-2"></path><path d="M3 3L2 14l6.5 6.5a1 1 0 1 0 3-3"></path><path d="M3 4h8"></path></svg></span>
+        <div><h4 style="margin:0;font-weight:700;font-size:26px;line-height:34px">Spolehlivost</h4><p style="margin:16px auto 0;max-width:280px;font-size:16px;line-height:26px;color:#3A4349">Vždy pro vás najdeme to správné řešení.</p></div>
+      </div>
+      <div data-reveal="text" data-delay="240" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px">
+        <span style="flex:none;width:108px;height:108px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"></circle><path d="M15.5 12.9L17 22l-5-3-5 3 1.5-9.1"></path></svg></span>
+        <div><h4 style="margin:0;font-weight:700;font-size:26px;line-height:34px">Zkušenost</h4><p style="margin:16px auto 0;max-width:280px;font-size:16px;line-height:26px;color:#3A4349">Svou práci umíme a&nbsp;děláme ji s&nbsp;láskou.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+</main>
+
+
+
+<sc-if value="{{ loginOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeLogin }}" style="position:fixed;inset:0;z-index:3000;background:rgba(5,32,46,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:{{ loginOpacity }};transition:opacity 250ms ease-out">
+    <div role="dialog" aria-modal="true" aria-labelledby="login-title" onClick="{{ stopLogin }}" style="position:relative;width:min(520px, 100%);box-sizing:border-box;background:#fff;border-radius:16px;padding:40px;box-shadow:0 24px 64px rgba(13,26,38,0.25);transform:{{ loginScale }};transition:transform 350ms cubic-bezier(0.22,1,0.36,1)">
+      <button onClick="{{ closeLogin }}" aria-label="Zavřít" style="position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:999px;border:none;background:#EEF1F3;color:#14191C;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 200ms ease-out" style-hover="background:#DCE1E4">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+      <h2 id="login-title" style="margin:0;font-weight:700;font-size:32px;line-height:40px;color:#14191C">Přihlášení</h2>
+      <form onSubmit="{{ submitLogin }}" style="margin-top:28px;display:flex;flex-direction:column;gap:20px">
+        <label style="display:flex;flex-direction:column;gap:8px;font-weight:600;font-size:15px;line-height:24px;color:#14191C">Uživatelské jméno
+          <input type="text" autocomplete="username" style="height:56px;padding:0 20px;border-radius:8px;border:1px solid #DCE1E4;font-size:16px;color:#14191C;background:#fff;outline:none;transition:border-color 200ms ease-out" style-focus="border-color:#075C82;box-shadow:0 0 0 3px rgba(7,92,130,0.15)">
+        </label>
+        <label style="display:flex;flex-direction:column;gap:8px;font-weight:600;font-size:15px;line-height:24px;color:#14191C">Heslo
+          <input type="password" autocomplete="current-password" style="height:56px;padding:0 20px;border-radius:8px;border:1px solid #DCE1E4;font-size:16px;color:#14191C;background:#fff;outline:none;transition:border-color 200ms ease-out" style-focus="border-color:#075C82;box-shadow:0 0 0 3px rgba(7,92,130,0.15)">
+        </label>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:15px;line-height:24px;color:#3A4349">
+          <p style="margin:0">Chcete svůj účet na <strong style="font-weight:600;color:#14191C">IMOS facility, a.s.</strong>? Neváhejte a&nbsp;<a href="#" style="font-weight:600;color:#075C82;text-decoration:underline;text-underline-offset:3px">zaregistrujte se</a>.</p>
+          <p style="margin:0">Pokud jste zapomněli heslo k&nbsp;Vašemu účtu, můžete si <a href="#" style="color:#075C82;text-decoration:underline;text-underline-offset:3px">nastavit nové heslo</a>.</p>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap">
+          <button type="button" onClick="{{ closeLogin }}" style="height:56px;padding:0 24px;border-radius:999px;border:1px solid #DCE1E4;background:#fff;color:#075C82;font-weight:600;font-size:16px;line-height:24px;cursor:pointer;transition:border-color 200ms ease-out" style-hover="border-color:#075C82">Zavřít</button>
+          <button type="submit" style="display:inline-flex;align-items:center;gap:8px;height:56px;padding:0 28px;border-radius:999px;border:none;background:#075C82;color:#fff;font-weight:600;font-size:16px;line-height:24px;cursor:pointer;transition:background 200ms ease-out" style-hover="background:#053F5A">Přihlášení</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</sc-if>
+
+<footer data-screen-label="Patička" style="background:#053F5A;color:#fff;padding:80px 0 40px">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:48px;flex-wrap:wrap;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,0.18)">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <a href="index.html" aria-label="IMOS facility – úvod" style="display:flex;align-items:center"><img src="assets/loga/imos-facility-logo-bile.png" alt="IMOS facility" style="height:44px;width:auto;display:block"></a>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:16px;line-height:26px">
+          <a href="tel:+420533432111" style="color:#fff" style-hover="color:#fff;text-decoration:underline">+420 533 432 111</a>
+          <a href="mailto:spravam@imosfacility.cz" style="color:#fff" style-hover="color:#fff;text-decoration:underline">spravam@imosfacility.cz</a>
+          <span>Gajdošova 4392/7, 615 00 Brno - Židenice</span>
+        </div>
+      </div>
+      <nav style="display:flex;gap:32px;flex-wrap:wrap;font-weight:600;font-size:17px;line-height:24px">
+        <a href="pronajem-nemovitosti.html" style="color:#fff;text-underline-offset:6px" style-hover="color:#fff;text-decoration:underline">Pronájem nemovitostí</a>
+        <a href="zasedaci-mistnosti.html" style="color:#fff;text-underline-offset:6px" style-hover="color:#fff;text-decoration:underline">Zasedací místnosti</a>
+        <a href="sprava-nemovitosti.html" style="color:#fff;text-underline-offset:6px" style-hover="color:#fff;text-decoration:underline">Správa nemovitostí</a>
+        <a href="o-nas.html" style="color:#fff;text-underline-offset:6px" style-hover="color:#fff;text-decoration:underline">O nás</a>
+        <a href="kontakt.html" style="color:#fff;text-underline-offset:6px" style-hover="color:#fff;text-decoration:underline">Kontakt</a>
+      </nav>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;padding-top:32px;font-size:14px;line-height:22px">
+      <div style="display:flex;gap:24px;flex-wrap:wrap">
+        <a href="#" style="color:#fff" style-hover="color:#fff;text-decoration:underline">Ochrana osobních údajů</a>
+        <a href="#" style="color:#fff" style-hover="color:#fff;text-decoration:underline">Pro oznamovatele</a>
+        <a href="#" style="color:#fff" style-hover="color:#fff;text-decoration:underline">Podpora EU</a>
+        <a href="#" style="color:#fff" style-hover="color:#fff;text-decoration:underline">Blog</a>
+      </div>
+      <div style="display:flex;gap:12px">
+        <a href="#" aria-label="Facebook" style="width:40px;height:40px;border-radius:999px;border:1px solid rgba(255,255,255,0.4);color:#fff;display:flex;align-items:center;justify-content:center;transition:background 200ms ease-out" style-hover="background:#fff;color:#053F5A">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h-2.5A3.5 3.5 0 0 0 9 6.5V10H6v4h3v7h4v-7h3l1-4h-4V7a1 1 0 0 1 1-1h2z"></path></svg></a>
+        <a href="#" aria-label="Instagram" style="width:40px;height:40px;border-radius:999px;border:1px solid rgba(255,255,255,0.4);color:#fff;display:flex;align-items:center;justify-content:center;transition:background 200ms ease-out" style-hover="background:#fff;color:#053F5A">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="0.8"></circle></svg></a>
+      </div>
+      <p style="margin:0;color:rgba(255,255,255,0.85)">Copyright © 2026 IMOS facility, a.s. | web by IMPnet</p>
+    </div>
+  </div>
+</footer>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;reveal&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Animace&quot;}}">
+const NB = s => s.replace(/ ([vkszouaiVKSZOUAI]) /g, ' $1\u00a0');
+const TABS = [
+  { title: 'Revize, kontroly, prohlídky', paras: ['Zajišťujeme sledování a provádění všech zákonem předepsaných revizí, pravidelných kontrol a servisních prohlídek společných prostor a technologických zařízení (elektroinstalace, hromosvody, spalinové cesty, výtahy, rozvody požární vody apod.). Součástí našich služeb je rovněž odstranění zjištěných závad a zajištění pravidelných kontrol v oblasti požární ochrany (PO) a bezpečnosti práce (BOZP).'], list: [] },
+  { title: 'Údržba a opravy', paras: ['Provádíme dohled nad technickým stavem nemovitosti a jejím vybavením. Kontrolujeme úplnost provozní a technické dokumentace, navrhujeme a realizujeme drobné opravy i větší rekonstrukce podle schválených plánů a výběrových řízení. Na základě požadavků vlastníků (SVJ) zajišťujeme také výběrová řízení na dodavatele služeb.'], list: [] },
+  { title: 'Energie, média a provozní služby', paras: ['Provádíme pravidelné vyhodnocení spotřeby energií a navrhujeme úsporná opatření. Zajišťujeme smluvní dodávky všech nezbytných médií a služeb, jako jsou:'], list: ['Elektřina, plyn, voda', 'Odvoz komunálního odpadu', 'Ostraha objektu', 'Úklidové služby', 'Údržba a úprava zeleně'] },
+  { title: 'Evidence a technická dokumentace', paras: ['Vedeme kompletní evidenci spojenou se správou nemovitosti, včetně:'], list: ['Evidence vlastníků jednotek a nájemců', 'Evidence pro roční vyúčtování služeb', 'Dokumentace technického stavu objektu a její průběžná aktualizace'] },
+  { title: 'Administrativa', paras: [], list: ['vyřizování dohodnuté korespondence', 'archivace písemností a dokumentace'] },
+  { title: 'Účetnictví a ekonomický servis', paras: ['Nabízíme komplexní vedení účetnictví včetně:'], list: ['Zajištění vedení účetnictví', 'Zpracování a kontrola přijatých faktur', 'Úhrady faktur po schválení SVJ', 'Komunikace s bankovními institucemi', 'Roční účetní uzávěrka a roční vyúčtování pro členy SVJ', 'Organizace schůzí a zastupování SVJ v souvisejících záležitostech'] },
+  { title: 'Úklidové služby a údržba zeleně', paras: ['Součástí správy nemovitostí je i specializované oddělení úklidových služeb. Naši pracovníci zajišťují čisté a příjemné prostředí v souladu s potřebami nájemců.'], list: ['Rozsah, četnost a harmonogram úklidu přizpůsobujeme požadavkům zákazníka', 'Používáme moderní úklidové technologie a šetrné čisticí prostředky', 'Máme vlastní technické zázemí a spolehlivý personál', 'Zajišťujeme doplňování hygienických potřeb', 'Při údržbě venkovní zeleně se staráme i o likvidaci rostlinného odpadu'], list2Title: 'Naše služby', list2: ['úklid garážových prostor (úklid velkých vnitřních ploch)', 'úklid bytových domů', 'úklid kancelářských prostor', 'pronájem obchodních prostor', 'úklid obchodních prostor', 'úklid sportovních prostor'] }
+].map(t => ({ ...t, title: NB(t.title), paras: t.paras.map(NB), list: t.list.map(NB), list2: (t.list2 || []).map(NB) }));
+
+class Component extends DCLogic {
+  openLogin(e) {
+    if (e) e.preventDefault();
+    clearTimeout(this.lgT);
+    this.lgKey = this.lgKey || (ev => { if (ev.key === 'Escape') this.closeLogin(); });
+    window.addEventListener('keydown', this.lgKey);
+    document.body.style.overflow = 'hidden';
+    this.setState({ loginOpen: true, loginShow: false });
+    requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ loginShow: true })));
+  }
+  closeLogin() {
+    window.removeEventListener('keydown', this.lgKey);
+    this.setState({ loginShow: false });
+    clearTimeout(this.lgT);
+    this.lgT = setTimeout(() => { this.setState({ loginOpen: false }); document.body.style.overflow = ''; }, 250);
+  }
+  state = { scrolled: false, narrow: false, menuOpen: false, tab: 0, panelIn: true, sent: false };
+  miniMapRef = React.createRef();
+  componentDidMount() {
+    this.onScroll = () => { const s = window.scrollY > 20; if (s !== this.state.scrolled) this.setState({ scrolled: s }); };
+    this.onResize = () => { const n = window.innerWidth < 1280; if (n !== this.state.narrow) this.setState({ narrow: n, menuOpen: false }); };
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    window.addEventListener('resize', this.onResize);
+    this.onScroll(); this.onResize();
+    this.setupReveal();
+    this.lTimer = setInterval(() => { if (window.L && this.miniMapRef.current) { clearInterval(this.lTimer); this.initMini(); } }, 100);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.onScroll); window.removeEventListener('resize', this.onResize);
+    clearInterval(this.lTimer); clearTimeout(this.tT); this.io && this.io.disconnect(); this.mini && this.mini.remove();
+  }
+  reduced() { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+  setupReveal() {
+    if (this.reduced() || this.props.reveal === false) return;
+    const els = Array.from(document.querySelectorAll('[data-reveal]'));
+    const ease = 'cubic-bezier(0.22,1,0.36,1)';
+    els.forEach(el => { const t = el.dataset.reveal; el.style.opacity = '0'; if (t !== 'fade') el.style.transform = 'translateY(' + (t === 'media' ? 32 : 24) + 'px)'; });
+    this.io = new IntersectionObserver(entries => entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target, t = el.dataset.reveal, d = +(el.dataset.delay || 0), dur = t === 'text' ? 600 : 800;
+      el.style.transition = 'opacity ' + dur + 'ms ' + ease + ' ' + d + 'ms, transform ' + dur + 'ms ' + ease + ' ' + d + 'ms';
+      el.style.opacity = '1'; el.style.transform = 'none';
+      setTimeout(() => { el.style.transition = ''; el.style.transform = ''; }, dur + d + 50);
+      this.io.unobserve(el);
+    }), { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+    els.forEach(el => this.io.observe(el));
+  }
+  initMini() {
+    const L = window.L, hq = [49.2005, 16.6430];
+    this.mini = L.map(this.miniMapRef.current, { scrollWheelZoom: false, zoomControl: false, attributionControl: false }).setView(hq, 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(this.mini);
+    L.marker(hq, { icon: L.divIcon({ className: '', html: '<div style="width:22px;height:22px;border-radius:50%;background:#075C82;border:3px solid #fff;box-shadow:0 0 0 10px rgba(7,92,130,0.22)"></div>', iconSize: [22, 22], iconAnchor: [11, 11] }) }).addTo(this.mini);
+  }
+  pick(i) {
+    if (i === this.state.tab) return;
+    if (this.reduced()) { this.setState({ tab: i }); return; }
+    this.setState({ panelIn: false });
+    clearTimeout(this.tT);
+    this.tT = setTimeout(() => this.setState({ tab: i, panelIn: true }), 180);
+  }
+  renderVals() {
+    const { scrolled, tab, panelIn, sent } = this.state;
+    const t = TABS[tab];
+    return {
+      wide: !this.state.narrow, narrow: !!this.state.narrow, menuOpen: !!this.state.narrow && !!this.state.menuOpen,
+      toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })),
+      headerBg: scrolled ? 'rgba(255,255,255,0.72)' : 'rgba(255,255,255,0.56)',
+      headerShadow: scrolled ? '0 4px 24px rgba(13,26,38,0.10)' : '0 0 0 rgba(0,0,0,0)',
+      loginOpen: !!this.state.loginOpen, loginOpacity: this.state.loginShow ? 1 : 0, loginScale: this.state.loginShow ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.97)',
+      openLogin: e => this.openLogin(e), closeLogin: () => this.closeLogin(), stopLogin: e => e.stopPropagation(),
+      submitLogin: e => { e.preventDefault(); this.closeLogin(); },
+      tabs: TABS.map((x, i) => { const a = i === tab; return { title: x.title, active: a ? 'true' : 'false', pick: () => this.pick(i),
+        bg: a ? '#075C82' : '#FFFFFF', color: a ? '#FFFFFF' : '#14191C', border: a ? '#075C82' : '#FFFFFF' }; }),
+      tab: { ...t, hasList: t.list.length > 0, hasList2: t.list2.length > 0 },
+      panelOpacity: panelIn ? 1 : 0, panelShift: panelIn ? 'translateY(0)' : 'translateY(8px)',
+      miniMapRef: this.miniMapRef,
+      sent, notSent: !sent,
+      submit: e => { e.preventDefault(); this.setState({ sent: true }); },
+      resetForm: () => this.setState({ sent: false })
+    };
+  }
+}
+
+</script>
+</body>
+</html>
