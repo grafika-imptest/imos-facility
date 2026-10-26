@@ -105,9 +105,8 @@
       if (!/border-radius: 999px/.test(s)) return;
       if (/width: 108px/.test(s)) sp.classList.add('g-icon');
       else if (/position: absolute; top: (16|20)px; left: (16|20)px/.test(s)) {
-        sp.classList.add('g-pill');
-        sp.classList.toggle('is-free', /rgb\(47, 133, 90\)/.test(s));
-        sp.classList.toggle('is-busy', /rgb\(200, 2, 37\)/.test(s));
+        // jen bílé štítky (lokalita); barevné stavové štítky přepíná šablona za běhu, ty necháváme
+        if (s.indexOf(WHITE) > -1) sp.classList.add('g-pill');
       }
     });
     const mapSec = root.querySelector('section[data-screen-label="Mapa"] [data-reveal="fade"]');
