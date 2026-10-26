@@ -105,17 +105,22 @@
       if (!/border-radius: 999px/.test(s)) return;
       if (/width: 108px/.test(s)) sp.classList.add('g-icon');
       else if (/position: absolute; top: (16|20)px; left: (16|20)px/.test(s)) {
-        sp.classList.add('g-pill'); sp.classList.toggle('is-free', /rgb\(47, 133, 90\)/.test(s));
+        sp.classList.add('g-pill');
+        sp.classList.toggle('is-free', /rgb\(47, 133, 90\)/.test(s));
+        sp.classList.toggle('is-busy', /rgb\(200, 2, 37\)/.test(s));
       }
     });
     const mapSec = root.querySelector('section[data-screen-label="Mapa"] [data-reveal="fade"]');
-    if (mapSec && !mapSec.classList.contains('g-mapwrap')) {
-      mapSec.classList.add('g-mapwrap', 'g-mapwrap--big');
+    if (mapSec) {
+      if (!mapSec.classList.contains('g-mapwrap')) {
+        mapSec.classList.add('g-mapwrap', 'g-mapwrap--big');
+        requestAnimationFrame(() => dispatchEvent(new Event('resize')));
+      }
+      // popup s detailem se vykresluje až po najetí na pin, proto se označuje pokaždé
       mapSec.querySelectorAll(':scope > div').forEach(d => {
         if (/border-radius: 999px/.test(st(d))) d.classList.add('g-map-legend');
         if (/width: 360px/.test(st(d))) d.classList.add('g-map-pop');
       });
-      requestAnimationFrame(() => dispatchEvent(new Event('resize')));
     }
     root.querySelectorAll('.leaflet-container').forEach(el => el.setAttribute('data-lenis-prevent', ''));
     menu();
@@ -154,6 +159,17 @@
     box.innerHTML = [['20+', 'let na trhu'], ['14', 'objektů v nabídce'], ['5', 'zasedacích místností']]
       .map(([b, t]) => `<div class="v2-stat"><b>${b}</b><span>${t}</span></div>`).join('');
     h.appendChild(box);
+    // CTA pod perexem
+    const p = h.querySelector('h1 + p');
+    if (p && !h.querySelector('.v2-hero-cta')) {
+      const arr = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+      const cta = document.createElement('div');
+      cta.className = 'v2-hero-cta';
+      cta.innerHTML = `<a class="v2-cta v2-cta--primary" href="pronajem-nemovitosti.html">Prohlédnout nabídku ${arr}</a>`
+        + `<a class="v2-cta v2-cta--glass" href="zasedaci-mistnosti.html">Rezervovat zasedačku ${arr}</a>`
+        + `<a class="v2-cta v2-cta--link" href="#kontakt">Nezávazná poptávka</a>`;
+      p.after(cta);
+    }
   }
 
   /* ---------- hlavička: tmavá nad hero, schovat při scrollu dolů ---------- */
