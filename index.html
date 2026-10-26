@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IMOS facility – Pronájem a správa nemovitostí v Brně</title>
+<meta name="description" content="Jsme IMOS facility, a.s. Nabízíme pronájem nemovitostí ✔️, bytů a nebytových prostor, ubytovací služby a poskytování služeb spojených s pronájmem. ✔️ Vše v Brně a blízkém okolí.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>IMOS facility – Pronájem a správa nemovitostí v Brně</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+html,body{margin:0;padding:0;background:#fff;color:#14191C;font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#075C82;text-decoration:none}
+a:hover{color:#053F5A}
+input,textarea,button{font-family:inherit}
+.leaflet-tile-pane{filter:grayscale(1) brightness(1.06) contrast(0.92)}
+.leaflet-container{font-family:"Inter",system-ui,sans-serif;background:#EEF1F3}
+@keyframes imosDot{0%{opacity:0;transform:translateY(0)}18%{opacity:1;transform:translateY(0)}80%{opacity:0;transform:translateY(14px)}100%{opacity:0;transform:translateY(0)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+
+<header data-screen-label="Header" style="position:fixed;top:0;left:0;right:0;z-index:2000;height:88px;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);background:{{ headerBg }};box-shadow:{{ headerShadow }};transition:background 300ms ease, box-shadow 300ms ease">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;gap:32px">
+    <a href="index.html" aria-label="IMOS facility – úvod" style="display:flex;align-items:center"><img src="assets/loga/imos-facility-logo.png" alt="IMOS facility" style="height:44px;width:auto;display:block"></a>
+    <div style="display:flex;align-items:center;gap:clamp(14px,1.7vw,32px);flex:none">
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+    <nav style="display:flex;align-items:center;gap:clamp(14px,1.7vw,32px);font-weight:600;font-size:clamp(15px,0.9vw,17px);line-height:24px;white-space:nowrap">
+      <a href="pronajem-nemovitosti.html" style="color:#14191C;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:left bottom;background-size:0% 2px;padding-bottom:4px;transition:background-size 250ms cubic-bezier(0.22,1,0.36,1), color 200ms ease-out" style-hover="color:#14191C;background-size:100% 2px">Pronájem nemovitostí</a>
+      <a href="zasedaci-mistnosti.html" style="color:#14191C;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:left bottom;background-size:0% 2px;padding-bottom:4px;transition:background-size 250ms cubic-bezier(0.22,1,0.36,1), color 200ms ease-out" style-hover="color:#14191C;background-size:100% 2px">Zasedací místnosti</a>
+      <a href="sprava-nemovitosti.html" style="color:#14191C;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:left bottom;background-size:0% 2px;padding-bottom:4px;transition:background-size 250ms cubic-bezier(0.22,1,0.36,1), color 200ms ease-out" style-hover="color:#14191C;background-size:100% 2px">Správa nemovitostí</a>
+      <span style="width:1px;height:24px;background:#6B767D"></span>
+      <a href="o-nas.html" style="color:#14191C;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:left bottom;background-size:0% 2px;padding-bottom:4px;transition:background-size 250ms cubic-bezier(0.22,1,0.36,1), color 200ms ease-out" style-hover="color:#14191C;background-size:100% 2px">O nás</a>
+      <a href="kontakt.html" style="color:#14191C;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:left bottom;background-size:0% 2px;padding-bottom:4px;transition:background-size 250ms cubic-bezier(0.22,1,0.36,1), color 200ms ease-out" style-hover="color:#14191C;background-size:100% 2px">Kontakt</a>
+      <a href="https://www.imos-development.cz" target="_blank" rel="noopener" style="color:#14191C;display:flex;align-items:center;gap:6px;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:left bottom;background-size:0% 2px;padding-bottom:4px;transition:background-size 250ms cubic-bezier(0.22,1,0.36,1), color 200ms ease-out" style-hover="color:#C80225;background-size:100% 2px">Prodej nemovitostí
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+      </a>
+</nav>
+    </sc-if>
+      <a href="#" onClick="{{ openLogin }}" aria-label="Přihlášení" style="width:44px;height:44px;border-radius:999px;border:1px solid #DCE1E4;display:flex;align-items:center;justify-content:center;color:#075C82;background:#fff;transition:background 200ms ease-out, color 200ms ease-out" style-hover="background:#075C82;color:#fff">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path></svg>
+      </a>
+          <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ toggleMenu }}" aria-label="Menu" style="width:44px;height:44px;border-radius:999px;border:1px solid #DCE1E4;background:#fff;color:#14191C;display:flex;align-items:center;justify-content:center;cursor:pointer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+      </button>
+      </sc-if>
+    </div>
+  </div>
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <nav style="position:absolute;top:88px;left:0;right:0;background:#fff;border-top:1px solid #DCE1E4;box-shadow:0 16px 40px rgba(13,26,38,0.14);padding:16px 24px 24px;display:flex;flex-direction:column;font-weight:600;font-size:17px;line-height:24px">
+      <a href="pronajem-nemovitosti.html" style="padding:12px 0;color:#14191C;text-underline-offset:6px;text-decoration-thickness:2px" style-hover="text-decoration:underline">Pronájem nemovitostí</a>
+      <a href="zasedaci-mistnosti.html" style="padding:12px 0;color:#14191C;text-underline-offset:6px;text-decoration-thickness:2px" style-hover="text-decoration:underline">Zasedací místnosti</a>
+      <a href="sprava-nemovitosti.html" style="padding:12px 0;color:#14191C;text-underline-offset:6px;text-decoration-thickness:2px" style-hover="text-decoration:underline">Správa nemovitostí</a>
+      <span style="height:1px;background:#DCE1E4;margin:8px 0"></span>
+      <a href="o-nas.html" style="padding:12px 0;color:#14191C;text-underline-offset:6px;text-decoration-thickness:2px" style-hover="text-decoration:underline">O nás</a>
+      <a href="kontakt.html" style="padding:12px 0;color:#14191C;text-underline-offset:6px;text-decoration-thickness:2px" style-hover="text-decoration:underline">Kontakt</a>
+      <a href="https://www.imos-development.cz" target="_blank" rel="noopener" style="padding:12px 0;color:#14191C;display:flex;align-items:center;gap:6px;transition:color 200ms ease-out;text-underline-offset:6px;text-decoration-thickness:2px" style-hover="color:#C80225;text-decoration:underline">Prodej nemovitostí
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+      </a>
+</nav>
+  </sc-if>
+</header>
+
+<main>
+<section data-screen-label="Hero" style="position:relative;height:100vh;min-height:760px;overflow:hidden;background:#053F5A">
+  <div style="position:absolute;inset:0;opacity:{{ heroBgOpacity }};transition:opacity 400ms ease-out">
+    <img src="assets/video/STOCK-hero-poster.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">
+    <video ref="{{ videoRef }}" poster="assets/video/STOCK-hero-poster.png" autoplay muted loop playsinline preload="auto" src="assets/video/STOCK-hero.mp4" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block"></video>
+  </div>
+  <div style="position:absolute;inset:0;background:linear-gradient(90deg, rgba(5,32,46,0.72) 0%, rgba(5,32,46,0.35) 50%, rgba(5,32,46,0.05) 100%)"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(0deg, rgba(5,32,46,0.65) 0%, rgba(5,32,46,0) 45%)"></div>
+  <div style="position:relative;height:100%;width:min(1600px, calc(100% - 48px));margin:0 auto;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:160px">
+    <div style="max-width:1040px;opacity:{{ heroTextOpacity }};transform:{{ heroTextTransform }};transition:opacity 600ms cubic-bezier(0.22,1,0.36,1) 150ms, transform 600ms cubic-bezier(0.22,1,0.36,1) 150ms">
+      <h1 style="margin:0;color:#fff;text-shadow:0 2px 24px rgba(5,32,46,0.45);font-weight:600;font-size:clamp(48px,4.6vw,88px);line-height:1.09;letter-spacing:-0.015em;text-wrap:balance">Pronajímáme a&nbsp;spravujeme <span style="color:#7FCBEE">nemovitosti v&nbsp;Brně</span></h1>
+      <p style="margin:28px 0 0;color:#fff;text-shadow:0 1px 16px rgba(5,32,46,0.5);font-size:20px;line-height:30px;max-width:640px">Kanceláře, obchodní prostory, sklady i&nbsp;parkování – přímo od vlastníka.</p>
+    </div>
+  </div>
+  <div style="position:absolute;left:50%;bottom:48px;transform:translateX(-50%);width:26px;height:40px;border-radius:13px;border:2px solid rgba(255,255,255,0.7);display:flex;justify-content:center;padding-top:7px;opacity:{{ scrollHintOpacity }};transition:opacity 200ms ease-out">
+    <span style="width:4px;height:8px;border-radius:2px;background:rgba(255,255,255,0.9);animation:imosDot 1.65s ease-in-out infinite"></span>
+  </div>
+</section>
+
+<section data-screen-label="Kategorie" style="padding:120px 0">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-bottom:56px">
+      <div>
+        <h2 data-reveal="text" style="margin:0;font-weight:800;font-size:52px;line-height:60px;letter-spacing:-0.005em;max-width:900px;text-wrap:balance">Jsme specialisté na pronájem nemovitostí v&nbsp;Brně</h2>
+        <p data-reveal="text" data-delay="80" style="margin:16px 0 0;font-size:18px;line-height:28px;color:#3A4349">Pronajímáme bytové i&nbsp;nebytové prostory.</p>
+      </div>
+      <a data-reveal="text" data-delay="160" href="pronajem-nemovitosti.html" style="display:flex;align-items:center;gap:8px;font-weight:600;font-size:16px;line-height:24px;color:#075C82;transition:gap 200ms ease-out" style-hover="gap:14px;color:#053F5A">Všechny nemovitosti
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      </a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:24px">
+      <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="5">
+        <div data-reveal="media" data-delay="{{ t.delay }}">
+          <a href="{{ t.href }}" onMouseEnter="{{ t.enter }}" onMouseLeave="{{ leaveTile }}" style="position:relative;display:block;height:440px;border-radius:16px;overflow:hidden;background:#EEF1F3">
+            <img src="{{ t.img }}" alt="{{ t.name }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:{{ t.imgScale }};transition:transform 600ms cubic-bezier(0.22,1,0.36,1)">
+            <div style="position:absolute;inset:0;background:linear-gradient(0deg, rgba(5,32,46,0.45) 0%, rgba(5,32,46,0) 40%)"></div>
+            <div style="position:absolute;left:16px;right:16px;bottom:16px;height:56px;border-radius:999px;background:#075C82;overflow:hidden;isolation:isolate;display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 24px">
+              <span style="position:absolute;top:-1px;bottom:-1px;left:-1px;right:-1px;background:#FFFFFF;transform-origin:left center;transform:{{ t.fill }};transition:transform 350ms cubic-bezier(0.22,1,0.36,1)"></span>
+              <span style="position:relative;font-weight:600;font-size:17px;line-height:24px;color:{{ t.labelColor }};transition:color 250ms ease-out">{{ t.name }}</span>
+              <span style="position:relative;width:40px;height:40px;border-radius:999px;background:{{ t.arrowBg }};color:{{ t.arrowColor }};display:flex;align-items:center;justify-content:center;transition:background 250ms ease-out, color 250ms ease-out">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+              </span>
+            </div>
+          </a>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Nabídka" style="padding:120px 0;background:#EAF5FB">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto">
+    <div style="text-align:center;margin-bottom:56px">
+      <h2 data-reveal="text" style="margin:0;font-weight:800;font-size:52px;line-height:60px;letter-spacing:-0.005em">To nejlepší z&nbsp;naší nabídky pronájmů</h2>
+      <p data-reveal="text" data-delay="80" style="margin:16px 0 0;font-size:18px;line-height:28px;color:#3A4349">Vybrané objekty s&nbsp;volnými prostory – vše k&nbsp;okamžitému pronájmu.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:24px">
+      <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+        <div data-reveal="media" data-delay="{{ c.delay }}">
+          <a href="#" onMouseEnter="{{ c.enter }}" onMouseLeave="{{ leaveCard }}" style="display:flex;flex-direction:column;height:100%;background:#fff;border:1px solid #DCE1E4;border-radius:16px;overflow:hidden;color:#14191C;box-shadow:{{ c.shadow }};transform:{{ c.lift }};transition:box-shadow 200ms ease-out, transform 200ms ease-out">
+            <div style="position:relative;height:340px;overflow:hidden;background:#EEF1F3">
+              <img src="{{ c.img }}" alt="{{ c.name }}" style="width:100%;height:100%;object-fit:cover;display:block;transform:{{ c.imgScale }};transition:transform 600ms cubic-bezier(0.22,1,0.36,1)">
+              <span style="position:absolute;top:20px;left:20px;padding:6px 16px;border-radius:999px;background:#2F855A;color:#fff;font-weight:600;font-size:13px;line-height:16px;letter-spacing:0.06em;text-transform:uppercase">Volné</span>
+            </div>
+            <div style="padding:28px 28px 28px;display:flex;flex-direction:column;gap:16px;flex:1">
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <sc-for list="{{ c.tags }}" as="tag" hint-placeholder-count="2">
+                  <span style="padding:4px 14px;border-radius:999px;border:1px solid #DCE1E4;font-weight:500;font-size:14px;line-height:22px;color:#3A4349">{{ tag }}</span>
+                </sc-for>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-top:auto">
+                <div>
+                  <h3 style="margin:0;font-weight:700;font-size:28px;line-height:36px">{{ c.name }}</h3>
+                  <p style="margin:8px 0 0;display:flex;align-items:center;gap:8px;font-size:16px;line-height:26px;color:#3A4349">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#075C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+                    {{ c.address }}
+                  </p>
+                </div>
+                <span style="flex:none;width:52px;height:52px;border-radius:999px;border:1px solid {{ c.arrowBorder }};background:{{ c.arrowBg }};color:{{ c.arrowColor }};display:flex;align-items:center;justify-content:center;transition:background 200ms ease-out, color 200ms ease-out, border-color 200ms ease-out">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </sc-for>
+    </div>
+    <div data-reveal="text" data-delay="320" style="display:flex;justify-content:center;margin-top:56px">
+      <a href="pronajem-nemovitosti.html" style="display:inline-flex;align-items:center;gap:8px;height:56px;padding:0 28px;border-radius:999px;background:#075C82;color:#fff;font-weight:600;font-size:16px;line-height:24px;transition:background 200ms ease-out, gap 200ms ease-out, padding 200ms ease-out" style-hover="background:#053F5A;color:#fff;gap:14px;padding:0 22px 0 28px">Všechny nemovitosti
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Mapa" style="padding:120px 0 0">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto 56px;display:flex;flex-direction:column;gap:24px">
+    <h2 data-reveal="text" style="margin:0;font-weight:800;font-size:52px;line-height:60px;letter-spacing:-0.005em">Nemovitosti po celém Brně</h2>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:32px 96px;flex-wrap:wrap">
+      <p data-reveal="text" data-delay="80" style="margin:0;flex:0 1 780px;max-width:780px;font-size:18px;line-height:28px;color:#3A4349;text-wrap:pretty">Většina nemovitostí se nachází přímo v&nbsp;Brně – od centra přes Královo Pole a&nbsp;Židenice až po Štýřice nebo Husovice. Vybrané objekty nabízíme také v&nbsp;okolí Brna a&nbsp;v&nbsp;Pardubicích.</p>
+      <div data-reveal="text" data-delay="160" style="display:flex;flex:none">
+        <a href="pronajem-nemovitosti.html" style="display:inline-flex;align-items:center;gap:8px;height:56px;padding:0 28px;border-radius:999px;background:#075C82;color:#fff;font-weight:600;font-size:16px;line-height:24px;transition:background 200ms ease-out, gap 200ms ease-out, padding 200ms ease-out" style-hover="background:#053F5A;color:#fff;gap:14px;padding:0 22px 0 28px">Prohlédnout nabídku
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div data-reveal="fade" style="position:relative;height:453px;background:#EEF1F3">
+    <div ref="{{ mapRef }}" style="position:absolute;inset:0;z-index:1"></div>
+    <div style="position:absolute;right:24px;bottom:24px;z-index:900;display:flex;gap:16px;padding:10px 18px;border-radius:999px;background:#fff;box-shadow:0 4px 24px rgba(13,26,38,0.10);font-weight:500;font-size:14px;line-height:22px;color:#3A4349">
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;border-radius:999px;background:#075C82"></span>Volné</span>
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;border-radius:999px;background:#6B767D"></span>Obsazené</span>
+    </div>
+    <sc-if value="{{ sel }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;top:32px;left:max(24px, calc((100% - 1600px) / 2));z-index:1000;width:360px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 16px 40px rgba(13,26,38,0.14)">
+        <div style="position:relative;height:200px;background:#EAF5FB;display:flex;align-items:center;justify-content:center;color:#075C82">
+          <sc-if value="{{ sel.photo }}" hint-placeholder-val="{{ false }}">
+            <img src="{{ sel.photo }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </sc-if>
+          <sc-if value="{{ sel.noPhoto }}" hint-placeholder-val="{{ false }}">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1"></rect><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M11 21v-3h2v3"></path></svg>
+          </sc-if>
+          <span style="position:absolute;top:16px;left:16px;padding:6px 14px;border-radius:999px;background:{{ sel.statusBg }};color:#fff;font-weight:600;font-size:13px;line-height:16px;letter-spacing:0.06em;text-transform:uppercase">{{ sel.status }}</span>
+          <button onClick="{{ closeSel }}" aria-label="Zavřít" style="position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:999px;border:none;background:#fff;color:#14191C;cursor:pointer;display:flex;align-items:center;justify-content:center">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+          </button>
+        </div>
+        <div style="padding:20px 24px 24px">
+          <h4 style="margin:0;font-weight:600;font-size:20px;line-height:28px">{{ sel.name }}</h4>
+          <p style="margin:6px 0 0;font-size:14px;line-height:22px;color:#3A4349">{{ sel.address }}</p>
+          <a href="#" style="margin-top:16px;display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:16px;line-height:24px;color:#075C82;transition:gap 200ms ease-out" style-hover="gap:14px;color:#053F5A">Detail nemovitosti
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+          </a>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</section>
+
+<section data-screen-label="O nás" style="padding:120px 0">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 560px), 1fr));gap:64px 96px;align-items:center">
+      <div data-reveal="media" style="border-radius:16px;overflow:hidden;height:640px;background:#EEF1F3">
+        <img data-reveal-scale="1" src="assets/foto/o-nas-sidlo-nova-osada.jpg" alt="Sídlo IMOS facility – Polyfunkční dům Nová Osada" style="width:100%;height:100%;object-fit:cover;display:block">
+      </div>
+      <div>
+        <h2 data-reveal="text" style="margin:0;font-weight:800;font-size:52px;line-height:60px;letter-spacing:-0.005em">O naší společnosti</h2>
+        <h3 data-reveal="text" data-delay="80" style="margin:24px 0 0;font-weight:700;font-size:28px;line-height:36px;color:#075C82">Jsme IMOS facility – váš stabilní pronajímatel</h3>
+        <p data-reveal="text" data-delay="160" style="margin:24px 0 0;font-size:18px;line-height:28px;color:#3A4349;text-wrap:pretty">Akciová společnost IMOS facility, a.s. vznikla v&nbsp;roce 2003. Jsme ryze česká firma s&nbsp;mnohaletou tradicí a&nbsp;kvalitními, ověřitelnými referencemi. IMOS facility, a.s. se zabývá především správou vlastních nemovitostí a&nbsp;nemovitostí ve vlastnictví fondu IMOS development.</p>
+        <ul data-reveal="text" data-delay="240" style="list-style:none;margin:32px 0 0;padding:0;display:flex;flex-direction:column;gap:14px">
+          <li style="display:flex;align-items:center;gap:14px;font-weight:600;font-size:18px;line-height:28px"><span style="flex:none;width:28px;height:28px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span>Jsme specialisté na pronájem nemovitostí v&nbsp;Brně</li>
+          <li style="display:flex;align-items:center;gap:14px;font-weight:600;font-size:18px;line-height:28px"><span style="flex:none;width:28px;height:28px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span>Pronajímáme bytové i&nbsp;nebytové prostory</li>
+          <li style="display:flex;align-items:center;gap:14px;font-weight:600;font-size:18px;line-height:28px"><span style="flex:none;width:28px;height:28px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span>Spravujeme a&nbsp;udržujeme nemovitosti</li>
+        </ul>
+        <a data-reveal="text" data-delay="320" href="#" style="margin-top:36px;display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:16px;line-height:24px;color:#075C82;transition:gap 200ms ease-out" style-hover="gap:14px;color:#053F5A">Více o nás
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </a>
+      </div>
+    </div>
+
+    <div style="margin-top:120px;display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:48px 32px">
+      <div data-reveal="text" data-delay="0" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px">
+        <span style="flex:none;width:108px;height:108px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M4 18h16"></path><path d="M6 18v-7"></path><path d="M10 18v-7"></path><path d="M14 18v-7"></path><path d="M18 18v-7"></path><path d="M12 3l9 5H3z"></path></svg></span>
+        <div><h4 style="margin:0;font-weight:700;font-size:26px;line-height:34px">Jistota</h4><p style="margin:16px auto 0;max-width:280px;font-size:16px;line-height:26px;color:#3A4349">Jsme stabilní firma s&nbsp;vlastním kapitálem.</p></div>
+      </div>
+      <div data-reveal="text" data-delay="80" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px">
+        <span style="flex:none;width:108px;height:108px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path><path d="M9 15.5l2 2 4-4"></path></svg></span>
+        <div><h4 style="margin:0;font-weight:700;font-size:26px;line-height:34px">Tradice</h4><p style="margin:16px auto 0;max-width:280px;font-size:16px;line-height:26px;color:#3A4349">Na realitním trhu působíme přes 20 let.</p></div>
+      </div>
+      <div data-reveal="text" data-delay="160" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px">
+        <span style="flex:none;width:108px;height:108px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l2 2a1 1 0 1 0 3-3"></path><path d="M14 14l2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"></path><path d="M21 3l1 11h-2"></path><path d="M3 3L2 14l6.5 6.5a1 1 0 1 0 3-3"></path><path d="M3 4h8"></path></svg></span>
+        <div><h4 style="margin:0;font-weight:700;font-size:26px;line-height:34px">Spolehlivost</h4><p style="margin:16px auto 0;max-width:280px;font-size:16px;line-height:26px;color:#3A4349">Vždy pro vás najdeme to správné řešení.</p></div>
+      </div>
+      <div data-reveal="text" data-delay="240" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px">
+        <span style="flex:none;width:108px;height:108px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"></circle><path d="M15.5 12.9L17 22l-5-3-5 3 1.5-9.1"></path></svg></span>
+        <div><h4 style="margin:0;font-weight:700;font-size:26px;line-height:34px">Zkušenost</h4><p style="margin:16px auto 0;max-width:280px;font-size:16px;line-height:26px;color:#3A4349">Svou práci umíme a&nbsp;děláme ji s&nbsp;láskou.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Partneři" style="padding:0 0 120px">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto">
+    <h2 data-reveal="text" style="margin:0 0 48px;text-align:center;font-weight:800;font-size:52px;line-height:60px;letter-spacing:-0.005em">Naši partneři</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:24px">
+      <sc-for list="{{ partners }}" as="p" hint-placeholder-count="4">
+        <div data-reveal="text" data-delay="{{ p.delay }}">
+          <a href="{{ p.url }}" target="_blank" rel="noopener" style="height:140px;border-radius:16px;border:1px solid #DCE1E4;background:#fff;display:flex;align-items:center;justify-content:center;filter:grayscale(1);opacity:0.75;transition:filter 200ms ease-out, opacity 200ms ease-out, border-color 200ms ease-out, box-shadow 200ms ease-out" style-hover="filter:grayscale(0);opacity:1;border-color:#075C82;box-shadow:0 16px 40px rgba(13,26,38,0.10)">
+            <img src="{{ p.logo }}" alt="{{ p.name }}" style="max-width:72%;max-height:64px;width:auto;height:auto;display:block">
+          </a>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section id="kontakt" data-screen-label="Kontakt" style="padding:120px 0;background:#EAF5FB">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto">
+    <div style="margin-bottom:56px">
+      <h2 data-reveal="text" style="margin:0;font-weight:800;font-size:52px;line-height:60px;letter-spacing:-0.005em;max-width:1100px;text-wrap:balance">HLEDÁTE KONKRÉTNÍ NEMOVITOST K&nbsp;PRONÁJMU?</h2>
+      <p data-reveal="text" data-delay="80" style="margin:16px 0 0;font-size:18px;line-height:28px;color:#3A4349">Ozvěte se nám, pomůžeme vám najít jakékoliv prostory v&nbsp;Brně.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 560px), 1fr));gap:32px;align-items:stretch">
+      <div data-reveal="media" style="background:#fff;border-radius:16px;padding:48px">
+        <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+          <div style="min-height:420px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:16px">
+            <span style="width:64px;height:64px;border-radius:999px;background:#2F855A;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span>
+            <h3 style="margin:0;font-weight:700;font-size:28px;line-height:36px">Děkujeme, ozveme se vám.</h3>
+            <button onClick="{{ resetForm }}" style="border:none;background:none;padding:0;color:#075C82;font-weight:600;font-size:16px;cursor:pointer">Odeslat další poptávku</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ submit }}" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:24px">
+            <label style="display:flex;flex-direction:column;gap:8px;grid-column:1 / -1;font-weight:600;font-size:15px;line-height:24px">Jméno a příjmení *
+              <input required type="text" style="height:56px;padding:0 20px;border-radius:8px;border:1px solid #DCE1E4;font-size:16px;color:#14191C;background:#fff;outline:none;transition:border-color 200ms ease-out" style-focus="border-color:#075C82;box-shadow:0 0 0 3px rgba(7,92,130,0.15)">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:8px;font-weight:600;font-size:15px;line-height:24px">Telefon *
+              <input required type="tel" style="height:56px;padding:0 20px;border-radius:8px;border:1px solid #DCE1E4;font-size:16px;color:#14191C;background:#fff;outline:none" style-focus="border-color:#075C82;box-shadow:0 0 0 3px rgba(7,92,130,0.15)">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:8px;font-weight:600;font-size:15px;line-height:24px">E-mail *
+              <input required type="email" style="height:56px;padding:0 20px;border-radius:8px;border:1px solid #DCE1E4;font-size:16px;color:#14191C;background:#fff;outline:none" style-focus="border-color:#075C82;box-shadow:0 0 0 3px rgba(7,92,130,0.15)">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:8px;grid-column:1 / -1;font-weight:600;font-size:15px;line-height:24px">Co pro vás můžeme udělat?
+              <textarea rows="5" style="padding:16px 20px;border-radius:8px;border:1px solid #DCE1E4;font-size:16px;line-height:26px;color:#14191C;background:#fff;outline:none;resize:vertical" style-focus="border-color:#075C82;box-shadow:0 0 0 3px rgba(7,92,130,0.15)"></textarea>
+            </label>
+            <label style="grid-column:1 / -1;display:flex;align-items:center;gap:12px;font-size:16px;line-height:26px;color:#14191C;cursor:pointer">
+              <input required type="checkbox" style="width:22px;height:22px;accent-color:#075C82;margin:0">Potvrďte, že jste člověk
+            </label>
+            <div style="grid-column:1 / -1;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+              <p style="margin:0;font-size:14px;line-height:22px;color:#3A4349">O vaše data je u&nbsp;nás postaráno. <a href="#" style="color:#075C82;text-decoration:underline;text-underline-offset:3px">Zásady ochrany osobních údajů</a></p>
+              <button type="submit" style="display:inline-flex;align-items:center;gap:8px;height:56px;padding:0 28px;border-radius:999px;border:none;background:#075C82;color:#fff;font-weight:600;font-size:16px;line-height:24px;cursor:pointer;transition:background 200ms ease-out, gap 200ms ease-out, padding 200ms ease-out" style-hover="background:#053F5A;gap:14px;padding:0 22px 0 28px">Odeslat poptávku
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+              </button>
+            </div>
+          </form>
+        </sc-if>
+      </div>
+      <div data-reveal="media" data-delay="100" style="background:#fff;border-radius:16px;overflow:hidden;display:flex;flex-direction:column">
+        <div style="padding:48px 48px 32px">
+          <h3 style="margin:0;font-weight:700;font-size:28px;line-height:36px">IMOS facility, a.s.</h3>
+          <div style="margin-top:24px;display:flex;flex-direction:column;gap:14px">
+            <a href="tel:+420533432111" style="display:flex;align-items:center;gap:14px;font-weight:600;font-size:18px;line-height:28px;color:#14191C" style-hover="color:#075C82">
+              <span style="flex:none;width:40px;height:40px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"></path></svg></span>+420 533 432 111</a>
+            <a href="mailto:spravam@imosfacility.cz" style="display:flex;align-items:center;gap:14px;font-weight:600;font-size:18px;line-height:28px;color:#14191C" style-hover="color:#075C82">
+              <span style="flex:none;width:40px;height:40px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg></span>spravam@imosfacility.cz</a>
+            <p style="margin:0;display:flex;align-items:center;gap:14px;font-size:16px;line-height:26px;color:#3A4349">
+              <span style="flex:none;width:40px;height:40px;border-radius:999px;background:#EAF5FB;color:#075C82;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></span>Gajdošova 4392/7, 615 00 Brno - Židenice</p>
+          </div>
+          <div style="margin-top:24px;padding-top:20px;border-top:1px solid #DCE1E4;font-size:14px;line-height:22px;color:#6B767D">
+            <p style="margin:0">Spisová značka: oddíl B, vložka 4018, vedeno v&nbsp;Krajského soudu v&nbsp;Brně</p>
+            <p style="margin:4px 0 0">Číslo datové schránky : eybeh7e</p>
+          </div>
+        </div>
+        <div ref="{{ miniMapRef }}" style="flex:1;min-height:240px;background:#EEF1F3;position:relative;z-index:1"></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<sc-if value="{{ loginOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeLogin }}" style="position:fixed;inset:0;z-index:3000;background:rgba(5,32,46,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:{{ loginOpacity }};transition:opacity 250ms ease-out">
+    <div role="dialog" aria-modal="true" aria-labelledby="login-title" onClick="{{ stopLogin }}" style="position:relative;width:min(520px, 100%);box-sizing:border-box;background:#fff;border-radius:16px;padding:40px;box-shadow:0 24px 64px rgba(13,26,38,0.25);transform:{{ loginScale }};transition:transform 350ms cubic-bezier(0.22,1,0.36,1)">
+      <button onClick="{{ closeLogin }}" aria-label="Zavřít" style="position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:999px;border:none;background:#EEF1F3;color:#14191C;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 200ms ease-out" style-hover="background:#DCE1E4">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+      <h2 id="login-title" style="margin:0;font-weight:700;font-size:32px;line-height:40px;color:#14191C">Přihlášení</h2>
+      <form onSubmit="{{ submitLogin }}" style="margin-top:28px;display:flex;flex-direction:column;gap:20px">
+        <label style="display:flex;flex-direction:column;gap:8px;font-weight:600;font-size:15px;line-height:24px;color:#14191C">Uživatelské jméno
+          <input type="text" autocomplete="username" style="height:56px;padding:0 20px;border-radius:8px;border:1px solid #DCE1E4;font-size:16px;color:#14191C;background:#fff;outline:none;transition:border-color 200ms ease-out" style-focus="border-color:#075C82;box-shadow:0 0 0 3px rgba(7,92,130,0.15)">
+        </label>
+        <label style="display:flex;flex-direction:column;gap:8px;font-weight:600;font-size:15px;line-height:24px;color:#14191C">Heslo
+          <input type="password" autocomplete="current-password" style="height:56px;padding:0 20px;border-radius:8px;border:1px solid #DCE1E4;font-size:16px;color:#14191C;background:#fff;outline:none;transition:border-color 200ms ease-out" style-focus="border-color:#075C82;box-shadow:0 0 0 3px rgba(7,92,130,0.15)">
+        </label>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:15px;line-height:24px;color:#3A4349">
+          <p style="margin:0">Chcete svůj účet na <strong style="font-weight:600;color:#14191C">IMOS facility, a.s.</strong>? Neváhejte a&nbsp;<a href="#" style="font-weight:600;color:#075C82;text-decoration:underline;text-underline-offset:3px">zaregistrujte se</a>.</p>
+          <p style="margin:0">Pokud jste zapomněli heslo k&nbsp;Vašemu účtu, můžete si <a href="#" style="color:#075C82;text-decoration:underline;text-underline-offset:3px">nastavit nové heslo</a>.</p>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap">
+          <button type="button" onClick="{{ closeLogin }}" style="height:56px;padding:0 24px;border-radius:999px;border:1px solid #DCE1E4;background:#fff;color:#075C82;font-weight:600;font-size:16px;line-height:24px;cursor:pointer;transition:border-color 200ms ease-out" style-hover="border-color:#075C82">Zavřít</button>
+          <button type="submit" style="display:inline-flex;align-items:center;gap:8px;height:56px;padding:0 28px;border-radius:999px;border:none;background:#075C82;color:#fff;font-weight:600;font-size:16px;line-height:24px;cursor:pointer;transition:background 200ms ease-out" style-hover="background:#053F5A">Přihlášení</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</sc-if>
+
+<footer data-screen-label="Patička" style="background:#053F5A;color:#fff;padding:80px 0 40px">
+  <div style="width:min(1600px, calc(100% - 48px));margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:48px;flex-wrap:wrap;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,0.18)">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <a href="index.html" aria-label="IMOS facility – úvod" style="display:flex;align-items:center"><img src="assets/loga/imos-facility-logo-bile.png" alt="IMOS facility" style="height:44px;width:auto;display:block"></a>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:16px;line-height:26px">
+          <a href="tel:+420533432111" style="color:#fff" style-hover="color:#fff;text-decoration:underline">+420 533 432 111</a>
+          <a href="mailto:spravam@imosfacility.cz" style="color:#fff" style-hover="color:#fff;text-decoration:underline">spravam@imosfacility.cz</a>
+          <span>Gajdošova 4392/7, 615 00 Brno - Židenice</span>
+        </div>
+      </div>
+      <nav style="display:flex;gap:32px;flex-wrap:wrap;font-weight:600;font-size:17px;line-height:24px">
+        <a href="pronajem-nemovitosti.html" style="color:#fff;text-underline-offset:6px" style-hover="color:#fff;text-decoration:underline">Pronájem nemovitostí</a>
+        <a href="zasedaci-mistnosti.html" style="color:#fff;text-underline-offset:6px" style-hover="color:#fff;text-decoration:underline">Zasedací místnosti</a>
+        <a href="sprava-nemovitosti.html" style="color:#fff;text-underline-offset:6px" style-hover="color:#fff;text-decoration:underline">Správa nemovitostí</a>
+        <a href="o-nas.html" style="color:#fff;text-underline-offset:6px" style-hover="color:#fff;text-decoration:underline">O nás</a>
+        <a href="kontakt.html" style="color:#fff;text-underline-offset:6px" style-hover="color:#fff;text-decoration:underline">Kontakt</a>
+      </nav>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;padding-top:32px;font-size:14px;line-height:22px">
+      <div style="display:flex;gap:24px;flex-wrap:wrap">
+        <a href="#" style="color:#fff" style-hover="color:#fff;text-decoration:underline">Ochrana osobních údajů</a>
+        <a href="#" style="color:#fff" style-hover="color:#fff;text-decoration:underline">Pro oznamovatele</a>
+        <a href="#" style="color:#fff" style-hover="color:#fff;text-decoration:underline">Podpora EU</a>
+        <a href="#" style="color:#fff" style-hover="color:#fff;text-decoration:underline">Blog</a>
+      </div>
+      <div style="display:flex;gap:12px">
+        <a href="#" aria-label="Facebook" style="width:40px;height:40px;border-radius:999px;border:1px solid rgba(255,255,255,0.4);color:#fff;display:flex;align-items:center;justify-content:center;transition:background 200ms ease-out" style-hover="background:#fff;color:#053F5A">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h-2.5A3.5 3.5 0 0 0 9 6.5V10H6v4h3v7h4v-7h3l1-4h-4V7a1 1 0 0 1 1-1h2z"></path></svg></a>
+        <a href="#" aria-label="Instagram" style="width:40px;height:40px;border-radius:999px;border:1px solid rgba(255,255,255,0.4);color:#fff;display:flex;align-items:center;justify-content:center;transition:background 200ms ease-out" style-hover="background:#fff;color:#053F5A">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="0.8"></circle></svg></a>
+      </div>
+      <p style="margin:0;color:rgba(255,255,255,0.85)">Copyright © 2026 IMOS facility, a.s. | web by IMPnet</p>
+    </div>
+  </div>
+</footer>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;reveal&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Animace&quot;}}">
+const F = 'assets/foto/';
+const NB = s => s.replace(/ ([vkszouaiVKSZOUAI]) /g, ' $1\u00a0');
+
+const OBJEKTY = [
+  { name: 'Pronájem kanceláří v Brně - Královo Pole - Areál Jana Babáka', address: 'Jana Babáka 11, 612 00 Brno - Královo Pole', free: true, ll: [49.2213, 16.5958], photo: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220816011904181.JPG' },
+  { name: 'Parkovací dům Rozmarýn', address: 'Kounicova 1007, 602 00 Brno-střed', free: true, ll: [49.2031, 16.6012], photo: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220720103736408.jpg' },
+  { name: 'Palác Morava', address: 'Malinovského nám. 603/4, 602 00 Brno-střed', free: true, ll: [49.1966, 16.6146], photo: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220809025155388.jpg' },
+  { name: 'Pronájem kanceláří Horní Heršpice - Areál Bohunická', address: 'Bohunická 50, 619 00 Brno-jih', free: false, ll: [49.1665, 16.5935], photo: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220816110613247.jpg' },
+  { name: 'Areál Vídeňská Tulip', address: 'Vídeňská 99, 639 00 BRNO - Štýřice', free: true, ll: [49.1765, 16.5958], photo: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220720123728273.jpg' },
+  { name: 'Pronájem kanceláří v Brně Židenicích - polyfunkční dům Nová Osada', address: 'Gajdošova 4392/7, 615 00 Brno-Židenice', free: true, ll: [49.2005, 16.6430], photo: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220720104503615.jpg' },
+  { name: 'Areál Valchařská', address: 'Valchařská 36, 614 00 Brno - Husovice', free: true, ll: [49.2148, 16.6290], photo: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220720123237300.jpg' },
+  { name: 'Nový Obzor', address: 'Fillova 1, 638 00 Brno-sever', free: false, ll: [49.2215, 16.6385], photo: 'https://www.imos-facility.cz/www/upload/products/frontimages/20251022110756103.jpg' },
+  { name: 'Skladové centrum Řípská', address: 'Řipská 9a, 627 00 Brno - Slatina', free: false, ll: [49.1795, 16.6745], photo: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220720110428782.jpg' },
+  { name: 'Pronájem skladu v Brně Medlánkách - Areál Hudcova', address: 'Hudcova 70a, 621 00 Brno-Medlánky', free: false, ll: [49.2335, 16.5805], photo: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220720105910566.jpg' },
+  { name: 'Pronájem komerčních prostor v Brně - ulice Kozí', address: 'Dvořákova 1, 602 00 Brno-střed', free: false, ll: [49.1960, 16.6115], photo: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220720122455552.jpg' },
+  { name: 'Leitnerova - rezidenční parkování', address: 'Hybešova 41, 602 00 Brno-střed', free: false, ll: [49.1902, 16.5975], photo: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220720121427503.jpg' },
+  { name: 'Královo Pole – Mojmírovo náměstí', address: 'Mojmírovo náměstí 22, 612 00 Brno-Královo Pole', free: false, ll: [49.2185, 16.5895], photo: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220720105214476.jpg' },
+  { name: 'Tenisová hala Sprint', address: 'Sportovní 2A, 602 00 Brno-Královo Pole', free: false, ll: [49.2140, 16.6005] }
+];
+
+const TILES = [
+  { name: 'Kanceláře', href: 'pronajem-nemovitosti.html?k=kancelare', img: F + 'kategorie-kancelare-babak-lobby.jpg' },
+  { name: 'Komerční prostory', href: 'pronajem-nemovitosti.html?k=komercni', img: F + 'detail-nova-osada-03-pasaz.jpg' },
+  { name: 'Sklady a výroba', href: 'pronajem-nemovitosti.html?k=sklady', img: F + 'kategorie-sklady-hudcova.jpg' },
+  { name: 'Byty', href: 'pronajem-nemovitosti.html?k=byty', img: F + 'kategorie-byty-tulip.jpg' },
+  { name: 'Ostatní', href: 'pronajem-nemovitosti.html?k=ostatni', img: F + 'kategorie-ostatni-rozmaryn-parkovani.jpg' }
+];
+
+const CARDS = [
+  { name: 'Areál Jana Babáka', address: 'Jana Babáka 11, Brno – Královo Pole', tags: ['Kanceláře', 'Komerční prostory', 'Sklady a výroba'], img: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220816011904181.JPG' },
+  { name: 'Polyfunkční dům Nová Osada', address: 'Gajdošova 4392/7, Brno – Židenice', tags: ['Kanceláře', 'Komerční prostory'], img: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220720104503615.jpg' },
+  { name: 'Palác Morava', address: 'Malinovského nám. 603/4, Brno – střed', tags: ['Kanceláře', 'Komerční prostory'], img: 'https://www.imos-facility.cz/www/upload/products/frontimages/20220809025155388.jpg' }
+];
+
+const PARTNERS = [
+  { name: 'IMOS development', url: 'https://www.imos-development.cz', logo: 'assets/loga/partner-imos-development.png' },
+  { name: 'Bruno Family Park', url: 'https://www.brunofamilypark.cz', logo: 'assets/loga/partner-bruno-family-park.png' },
+  { name: 'Horský resort Dolní Morava', url: 'https://www.dolnimorava.cz', logo: 'assets/loga/partner-dolni-morava.png' },
+  { name: 'Sprint', url: 'https://www.sprinttenis.cz', logo: 'assets/loga/partner-sprint-tenis.png' }
+];
+
+
+class Component extends DCLogic {
+  openLogin(e) {
+    if (e) e.preventDefault();
+    clearTimeout(this.lgT);
+    this.lgKey = this.lgKey || (ev => { if (ev.key === 'Escape') this.closeLogin(); });
+    window.addEventListener('keydown', this.lgKey);
+    document.body.style.overflow = 'hidden';
+    this.setState({ loginOpen: true, loginShow: false });
+    requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ loginShow: true })));
+  }
+  closeLogin() {
+    window.removeEventListener('keydown', this.lgKey);
+    this.setState({ loginShow: false });
+    clearTimeout(this.lgT);
+    this.lgT = setTimeout(() => { this.setState({ loginOpen: false }); document.body.style.overflow = ''; }, 250);
+  }
+  state = { scrolled: false, loaded: false, slide: 0, hoverTile: -1, hoverCard: -1, sel: null, sent: false };
+  mapRef = React.createRef();
+  miniMapRef = React.createRef();
+  videoRef = React.createRef();
+
+  componentDidMount() {
+    this.onScroll = () => { const s = window.scrollY > 20; if (s !== this.state.scrolled) this.setState({ scrolled: s }); };
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    this.onScroll();
+    this.onResize = () => { const n = window.innerWidth < 1280; if (n !== this.state.narrow) this.setState({ narrow: n, menuOpen: false }); };
+    window.addEventListener('resize', this.onResize);
+    this.onResize();
+    requestAnimationFrame(() => setTimeout(() => this.setState({ loaded: true }), 30));
+    const v = this.videoRef.current;
+    if (v) { v.muted = true; v.defaultMuted = true; v.loop = true; v.playsInline = true; v.setAttribute('muted', '');
+      const play = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
+      if (v.readyState >= 2) play(); else v.addEventListener('canplay', play, { once: true });
+      v.addEventListener('ended', () => { v.currentTime = 0; play(); }); }
+    this.setupReveal();
+    this.waitLeaflet();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener('resize', this.onResize);
+    clearInterval(this.lTimer);
+    this.io && this.io.disconnect();
+    this.map && this.map.remove(); this.mini && this.mini.remove();
+  }
+  reduced() { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+
+  setupReveal() {
+    if (this.reduced() || this.props.reveal === false) return;
+    const els = Array.from(document.querySelectorAll('[data-reveal]'));
+    const ease = 'cubic-bezier(0.22,1,0.36,1)';
+    els.forEach(el => {
+      const t = el.dataset.reveal;
+      el.style.opacity = '0';
+      if (t !== 'fade') el.style.transform = `translateY(${t === 'media' ? 32 : 24}px)`;
+      const img = el.querySelector('[data-reveal-scale]');
+      if (img) img.style.transform = 'scale(1.04)';
+    });
+    this.io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target, t = el.dataset.reveal, d = +(el.dataset.delay || 0), dur = t === 'text' ? 600 : 800;
+        el.style.transition = `opacity ${dur}ms ${ease} ${d}ms, transform ${dur}ms ${ease} ${d}ms`;
+        el.style.opacity = '1'; el.style.transform = 'none';
+        const img = el.querySelector('[data-reveal-scale]');
+        if (img) { img.style.transition = `transform ${dur + 400}ms ${ease} ${d}ms`; img.style.transform = 'scale(1)'; }
+        setTimeout(() => { el.style.transition = ''; el.style.transform = ''; el.style.willChange = ''; }, dur + d + 50);
+        this.io.unobserve(el);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+    els.forEach(el => this.io.observe(el));
+  }
+
+  waitLeaflet() {
+    this.lTimer = setInterval(() => {
+      if (window.L && this.mapRef.current && this.miniMapRef.current) { clearInterval(this.lTimer); this.initMaps(); }
+    }, 100);
+  }
+  pinHtml(free, active) {
+    const c = free ? '#075C82' : '#6B767D';
+    const halo = active ? `0 0 0 10px ${free ? 'rgba(7,92,130,0.22)' : 'rgba(107,118,125,0.25)'}` : '0 2px 8px rgba(13,26,38,0.25)';
+    return `<div style="width:22px;height:22px;border-radius:50%;background:${c};border:3px solid #fff;box-shadow:${halo};transform:scale(${active ? 1.35 : 1});transition:transform 200ms ease-out, box-shadow 200ms ease-out;cursor:pointer"></div>`;
+  }
+  initMaps() {
+    const L = window.L;
+    const tiles = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const attr = '&copy; OpenStreetMap';
+    this.map = L.map(this.mapRef.current, { scrollWheelZoom: false, zoomControl: true, attributionControl: true });
+    L.tileLayer(tiles, { attribution: attr, maxZoom: 19 }).addTo(this.map);
+    this.markers = OBJEKTY.map((o, i) => {
+      const icon = a => L.divIcon({ className: '', html: this.pinHtml(o.free, a), iconSize: [22, 22], iconAnchor: [11, 11] });
+      const m = L.marker(o.ll, { icon: icon(false), riseOnHover: true }).addTo(this.map);
+      m.on('mouseover', () => m.setIcon(icon(true)));
+      m.on('mouseout', () => { if (this.state.selIdx !== i) m.setIcon(icon(false)); });
+      m.on('click', () => this.select(i));
+      m._mk = icon;
+      return m;
+    });
+    this.map.fitBounds(L.latLngBounds(OBJEKTY.map(o => o.ll)), { paddingTopLeft: [420, 60], paddingBottomRight: [60, 60] });
+
+    const hq = [49.2005, 16.6430];
+    this.mini = L.map(this.miniMapRef.current, { scrollWheelZoom: false, zoomControl: false, attributionControl: false, dragging: true }).setView(hq, 15);
+    L.tileLayer(tiles, { maxZoom: 19 }).addTo(this.mini);
+    L.marker(hq, { icon: L.divIcon({ className: '', html: this.pinHtml(true, true), iconSize: [22, 22], iconAnchor: [11, 11] }) }).addTo(this.mini);
+  }
+  select(i) {
+    const prev = this.state.selIdx;
+    if (prev != null && this.markers[prev]) this.markers[prev].setIcon(this.markers[prev]._mk(false));
+    if (i != null && this.markers[i]) this.markers[i].setIcon(this.markers[i]._mk(true));
+    this.setState({ selIdx: i, sel: i == null ? null : OBJEKTY[i] });
+  }
+
+  renderVals() {
+    const { scrolled, loaded, slide, hoverTile, hoverCard, sel, sent } = this.state;
+    return {
+      wide: !this.state.narrow, narrow: !!this.state.narrow, menuOpen: !!this.state.narrow && !!this.state.menuOpen,
+      toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })),
+      headerBg: scrolled ? 'rgba(255,255,255,0.72)' : 'rgba(255,255,255,0.56)',
+      headerShadow: scrolled ? '0 4px 24px rgba(13,26,38,0.10)' : '0 0 0 rgba(0,0,0,0)',
+      loginOpen: !!this.state.loginOpen, loginOpacity: this.state.loginShow ? 1 : 0, loginScale: this.state.loginShow ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.97)',
+      openLogin: e => this.openLogin(e), closeLogin: () => this.closeLogin(), stopLogin: e => e.stopPropagation(),
+      submitLogin: e => { e.preventDefault(); this.closeLogin(); },
+      heroBgOpacity: loaded ? 1 : 0,
+      heroTextOpacity: loaded ? 1 : 0,
+      heroTextTransform: loaded ? 'translateY(0)' : 'translateY(24px)',
+      scrollHintOpacity: scrolled ? 0 : 1,
+      tiles: TILES.map((t, i) => {
+        const h = hoverTile === i;
+        return { ...t, delay: i * 80, enter: () => this.setState({ hoverTile: i }),
+          imgScale: h ? 'scale(1.06)' : 'scale(1)', fill: h ? 'scaleX(0)' : 'scaleX(1)',
+          labelColor: h ? '#FFFFFF' : '#14191C', arrowBg: h ? '#FFFFFF' : '#075C82', arrowColor: h ? '#075C82' : '#FFFFFF' };
+      }),
+      leaveTile: () => this.setState({ hoverTile: -1 }),
+      cards: CARDS.map((c, i) => {
+        const h = hoverCard === i;
+        return { ...c, address: NB(c.address), delay: 160 + i * 80, enter: () => this.setState({ hoverCard: i }),
+          shadow: h ? '0 16px 40px rgba(13,26,38,0.14)' : '0 0 0 rgba(0,0,0,0)',
+          lift: h ? 'translateY(-4px)' : 'translateY(0)', imgScale: h ? 'scale(1.06)' : 'scale(1)',
+          arrowBg: h ? '#075C82' : '#FFFFFF', arrowColor: h ? '#FFFFFF' : '#075C82', arrowBorder: h ? '#075C82' : '#DCE1E4' };
+      }),
+      leaveCard: () => this.setState({ hoverCard: -1 }),
+      partners: PARTNERS.map((p, i) => ({ ...p, delay: i * 60 })),
+      mapRef: this.mapRef,
+      videoRef: this.videoRef,
+      miniMapRef: this.miniMapRef,
+      sel: sel ? { ...sel, noPhoto: !sel.photo, status: sel.free ? 'Volné' : 'Obsazené', statusBg: sel.free ? '#2F855A' : '#6B767D' } : null,
+      closeSel: () => this.select(null),
+      sent, notSent: !sent,
+      submit: e => { e.preventDefault(); this.setState({ sent: true }); },
+      resetForm: () => this.setState({ sent: false })
+    };
+  }
+}
+
+</script>
+</body>
+</html>
