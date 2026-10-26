@@ -185,7 +185,7 @@ input,textarea,button{font-family:inherit}
     <div ref="{{ mapRef }}" style="position:absolute;inset:0;z-index:1"></div>
     <div style="position:absolute;right:24px;bottom:24px;z-index:900;display:flex;gap:16px;padding:10px 18px;border-radius:999px;background:#fff;box-shadow:0 4px 24px rgba(13,26,38,0.10);font-weight:500;font-size:14px;line-height:22px;color:#3A4349">
       <span style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;border-radius:999px;background:#2F855A"></span>Volné</span>
-      <span style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;border-radius:999px;background:#C80225"></span>Obsazené</span>
+      <span style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;border-radius:999px;background:#8A969D"></span>Obsazené</span>
     </div>
     <sc-if value="{{ sel }}" hint-placeholder-val="{{ false }}">
       <div style="position:absolute;top:32px;left:max(24px, calc((100% - 1600px) / 2));z-index:1000;width:360px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 16px 40px rgba(13,26,38,0.14)">
@@ -521,8 +521,8 @@ class Component extends DCLogic {
     }, 100);
   }
   pinHtml(free, active, hq) {
-    const c = hq ? '#075C82' : free ? '#2F855A' : '#C80225';
-    const halo = active ? `0 0 0 10px ${hq ? 'rgba(7,92,130,0.22)' : free ? 'rgba(47,133,90,0.24)' : 'rgba(200,2,37,0.22)'}` : '0 2px 8px rgba(13,26,38,0.25)';
+    const c = hq ? '#075C82' : free ? '#2F855A' : '#8A969D';
+    const halo = active ? `0 0 0 10px ${hq ? 'rgba(7,92,130,0.22)' : free ? 'rgba(47,133,90,0.24)' : 'rgba(138,150,157,0.28)'}` : '0 2px 8px rgba(13,26,38,0.25)';
     return `<div style="width:22px;height:22px;border-radius:50%;background:${c};border:3px solid #fff;box-shadow:${halo};transform:scale(${active ? 1.35 : 1});transition:transform 200ms ease-out, box-shadow 200ms ease-out;cursor:pointer"></div>`;
   }
   initMaps() {
@@ -587,7 +587,7 @@ class Component extends DCLogic {
       mapRef: this.mapRef,
       videoRef: this.videoRef,
       miniMapRef: this.miniMapRef,
-      sel: sel ? { ...sel, noPhoto: !sel.photo, status: sel.free ? 'Volné' : 'Obsazené', statusBg: sel.free ? '#2F855A' : '#C80225' } : null,
+      sel: sel ? { ...sel, noPhoto: !sel.photo, status: sel.free ? 'Volné' : 'Obsazené', statusBg: sel.free ? '#2F855A' : '#6B767D' } : null,
       closeSel: () => this.select(null),
       sent, notSent: !sent,
       submit: e => { e.preventDefault(); this.setState({ sent: true }); },

@@ -98,8 +98,6 @@ html.v2 a.g-card:hover{transform:translateY(-6px)!important;box-shadow:0 1px 0 r
 html.v2 .g-media{border-radius:var(--r)!important}
 html.v2 .g-card .g-media, html.v2 .g-card > div:first-child{border-radius:0}
 html.v2 .g-pill{background:rgba(255,255,255,.72)!important;color:var(--imos)!important;border:1px solid rgba(255,255,255,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-html.v2 .g-pill.is-free{background:rgba(47,133,90,.78)!important;color:#fff!important;border-color:rgba(255,255,255,.35)}
-html.v2 .g-pill.is-busy{background:rgba(200,2,37,.82)!important;color:#fff!important;border-color:rgba(255,255,255,.35)}
 html.v2 .g-map-pop{animation:v2pop .45s var(--ease) both}
 @keyframes v2pop{from{opacity:0;transform:translateY(10px) scale(.97)}}
 
