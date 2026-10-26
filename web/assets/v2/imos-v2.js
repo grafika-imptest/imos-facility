@@ -326,6 +326,39 @@
   }
 
   /* ---------- pohyb ---------- */
+  /* ---------- ikony hodnot: posunutý barevný „stín“ + kreslení čar při načtení a najetí ---------- */
+  function icons() {
+    const { gsap } = window;
+    document.querySelectorAll('.g-icon').forEach(box => {
+      if (box.dataset.v2i) return;
+      const svg = box.querySelector('svg');
+      if (!svg) return;
+      box.dataset.v2i = 1;
+      const item = box.parentElement;
+      item.classList.add('g-value');
+      const shadow = svg.cloneNode(true);
+      shadow.classList.add('v2-ico-shadow'); shadow.setAttribute('aria-hidden', 'true');
+      svg.classList.add('v2-ico');
+      box.insertBefore(shadow, svg);
+      if (!gsap) return;
+      const parts = [...svg.querySelectorAll('path, rect, circle, line, polyline')];
+      parts.forEach(p => { const l = p.getTotalLength ? Math.ceil(p.getTotalLength()) + 1 : 100; p.style.strokeDasharray = l; p.style.strokeDashoffset = l; p.dataset.len = l; });
+      const draw = (dur, delay) => gsap.fromTo(parts, { strokeDashoffset: i => +parts[i].dataset.len }, { strokeDashoffset: 0, duration: dur, ease: 'power2.inOut', stagger: 0.08, delay });
+      // stín vyjede přes CSS přechod (třída is-in), čáry se kreslí GSAPem
+      box.classList.add('v2-ico-wait');
+      window.ScrollTrigger.create({ trigger: box, start: 'top 88%', once: true, onEnter: () => {
+        draw(1.1, 0);
+        setTimeout(() => box.classList.add('is-in'), 350);
+      } });
+      let busy = false;
+      item.addEventListener('mouseenter', () => {
+        if (busy) return; busy = true;
+        draw(0.7, 0).eventCallback('onComplete', () => (busy = false));
+        gsap.fromTo(svg, { y: 0 }, { y: -6, duration: 0.25, ease: 'power2.out', yoyo: true, repeat: 1 });
+      });
+    });
+  }
+
   function motion() {
     motionLibs.then(() => {
       const { gsap, ScrollTrigger } = window;
@@ -356,6 +389,7 @@
         gsap.from('.v2-stat', { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.08, delay: 0.6 });
       }
       reveal(document);
+      icons();
       // obrázky ve velkých blocích – parallax uvnitř rámu
       document.querySelectorAll('[data-reveal-scale]').forEach(img => gsap.fromTo(img, { yPercent: -6, scale: 1.14 }, { yPercent: 6, scale: 1.14, ease: 'none',
         scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } }));
