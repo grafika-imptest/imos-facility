@@ -308,17 +308,43 @@
       bar = document.createElement('div'); bar.className = 'v2-when';
       wrap.insertBefore(bar, wrap.firstChild);
       const days = []; for (let d = new Date(today); days.length < 15; d.setDate(d.getDate() + 1)) if (!isWeekend(d)) days.push(new Date(d));
-      bar._days = days; bar._d = null; bar._s = 'day';
+      bar._days = days; bar._d = null; bar._s = 'day'; bar._open = false;
+      bar._view = new Date(today.getFullYear(), today.getMonth(), 1);
+      const first = new Date(today.getFullYear(), today.getMonth(), 1), maxView = new Date(today.getFullYear(), today.getMonth() + 11, 1);
       bar.addEventListener('click', e => {
-        const d = e.target.closest('[data-d]'), s = e.target.closest('[data-s]');
+        const d = e.target.closest('[data-d]'), pd = e.target.closest('[data-pd]'), s = e.target.closest('[data-s]'),
+          m = e.target.closest('[data-pm]'), tog = e.target.closest('[data-cal]');
         if (d) bar._d = bar._d === d.dataset.d ? null : d.dataset.d;
+        if (pd && !pd.disabled) { bar._d = pd.dataset.pd; bar._open = false; }
         if (s) bar._s = s.dataset.s;
-        if (d || s) { draw(); badges(); }
+        if (m) { bar._view = new Date(bar._view.getFullYear(), bar._view.getMonth() + +m.dataset.pm, 1); }
+        if (tog) { bar._open = !bar._open; if (bar._d) { const x = new Date(bar._d + 'T00:00:00'); bar._view = new Date(x.getFullYear(), x.getMonth(), 1); } }
+        if (d || pd || s || m || tog) { draw(); badges(); }
       });
+      document.addEventListener('click', e => { if (bar._open && !e.composedPath().includes(bar)) { bar._open = false; draw(); } });
+      document.addEventListener('keydown', e => { if (bar._open && e.key === 'Escape') { bar._open = false; draw(); } });
+      const ico = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+      const arrow = d => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+      const pop = () => {
+        const v = bar._view, lead = (v.getDay() + 6) % 7, n = new Date(v.getFullYear(), v.getMonth() + 1, 0).getDate();
+        let cells = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'].map(x => `<div class="v2-cal__dow">${x}</div>`).join('');
+        for (let i = 0; i < lead; i++) cells += '<span></span>';
+        for (let i = 1; i <= n; i++) {
+          const d = new Date(v.getFullYear(), v.getMonth(), i), off = d < today || isWeekend(d);
+          cells += `<button type="button" class="v2-day ${bar._d === iso(d) ? 'is-sel' : ''} ${iso(d) === iso(today) ? 'is-today' : ''}" data-pd="${iso(d)}" ${off ? 'disabled' : ''}>${i}</button>`;
+        }
+        return `<div class="v2-when__pop" role="dialog" aria-label="Vyberte datum">
+          <div class="v2-cal__head"><p class="v2-cal__month" style="margin:0">${fmt(v, { month: 'long', year: 'numeric' })}</p>
+            <div class="v2-cal__nav"><button type="button" data-pm="-1" aria-label="Předchozí měsíc" ${v <= first ? 'disabled' : ''}>${arrow('M15 18l-6-6 6-6')}</button><button type="button" data-pm="1" aria-label="Další měsíc" ${v >= maxView ? 'disabled' : ''}>${arrow('M9 6l6 6-6 6')}</button></div></div>
+          <div class="v2-cal__grid">${cells}</div></div>`;
+      };
       const draw = () => {
-        bar.innerHTML = `<b>Kdy potřebujete?</b><div class="v2-when__days" data-lenis-prevent>` + bar._days.map(d =>
+        const inStrip = bar._d && bar._days.some(d => iso(d) === bar._d);
+        const calLbl = bar._d && !inStrip ? fmt(new Date(bar._d + 'T00:00:00'), { weekday: 'short', day: 'numeric', month: 'numeric' }) : 'Jiné datum';
+        bar.innerHTML = `<b>Datum, kdy by se vám hodilo</b><div class="v2-when__row"><div class="v2-when__days" data-lenis-prevent>` + bar._days.map(d =>
           `<button type="button" data-d="${iso(d)}" class="${bar._d === iso(d) ? 'is-on' : ''}"><small>${fmt(d, { weekday: 'short' })}</small>${d.getDate()}.${d.getMonth() + 1}.</button>`).join('')
-          + `</div><div class="v2-when__slots">` + SLOTS.map(([k, t]) => `<button type="button" data-s="${k}" class="${bar._s === k ? 'is-on' : ''}">${t}</button>`).join('') + `</div>`;
+          + `</div><div class="v2-when__calwrap"><button type="button" class="v2-when__cal ${bar._d && !inStrip ? 'is-on' : ''}" data-cal aria-expanded="${bar._open}">${ico}<span>${calLbl}</span></button>${bar._open ? pop() : ''}</div></div>`
+          + `<div class="v2-when__slots">` + SLOTS.map(([k, t]) => `<button type="button" data-s="${k}" class="${bar._s === k ? 'is-on' : ''}">${t}</button>`).join('') + `</div>`;
       };
       draw();
     }
