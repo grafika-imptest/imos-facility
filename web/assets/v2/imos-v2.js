@@ -18,6 +18,9 @@
     const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s);
   }));
   const css = href => { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = href; document.head.appendChild(l); };
+  ['https://cdn.jsdelivr.net', 'https://tiles.openfreemap.org'].forEach(h => {
+    const l = document.createElement('link'); l.rel = 'preconnect'; l.href = h; l.crossOrigin = ''; document.head.appendChild(l);
+  });
   css('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;650;700&display=swap');
 
   const motionLibs = reduce ? Promise.reject() : Promise.all([
@@ -61,17 +64,27 @@
       return st;
     }));
   }
-  // náhrada za L.tileLayer(...) v šablonách: vrátí skupinu vrstev hned, podklad dosadí po načtení MapLibre
+  // náhrada za L.tileLayer(...) v šablonách: vrátí skupinu vrstev hned, podklad dosadí,
+  // až se mapa přiblíží k viewportu (MapLibre je ~800 kB a WebGL – nemá brzdit načtení stránky)
+  let webgl;
   window.IMOS_TILES = function (L, opts) {
     const g = L.layerGroup();
     const raster = () => L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
       { maxZoom: 19, attribution: '&copy; OpenStreetMap &copy; CARTO' });
-    const webgl = (() => { try { return !!document.createElement('canvas').getContext('webgl2'); } catch (e) { return false; } })();
+    if (webgl === undefined) webgl = (() => { try { return !!document.createElement('canvas').getContext('webgl2'); } catch (e) { return false; } })();
     if (!webgl) { g.addLayer(raster()); return g; }
-    css(GL + 'maplibre-gl.css');
-    Promise.all([load(GL + 'maplibre-gl.js').then(() => load(CDN + '@maplibre/maplibre-gl-leaflet@0.0.22/leaflet-maplibre-gl.js')), imosStyle()])
-      .then(([, style]) => g.addLayer(L.maplibreGL({ style, attribution: '&copy; OpenFreeMap &copy; OpenMapTiles &copy; OpenStreetMap', interactive: false })))
-      .catch(() => g.addLayer(raster()));
+    const start = () => {
+      css(GL + 'maplibre-gl.css');
+      Promise.all([load(GL + 'maplibre-gl.js').then(() => load(CDN + '@maplibre/maplibre-gl-leaflet@0.0.22/leaflet-maplibre-gl.js')), imosStyle()])
+        .then(([, style]) => g.addLayer(L.maplibreGL({ style, attribution: '&copy; OpenFreeMap &copy; OpenMapTiles &copy; OpenStreetMap', interactive: false })))
+        .catch(() => g.addLayer(raster()));
+    };
+    g.once('add', () => {
+      const el = g._map && g._map.getContainer();
+      if (!el || !window.IntersectionObserver) return start();
+      const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); start(); } }, { rootMargin: '600px 0px' });
+      io.observe(el);
+    });
     return g;
   };
 
@@ -331,7 +344,7 @@
     motionLibs.then(() => {
       const { gsap, ScrollTrigger } = window;
       gsap.registerPlugin(ScrollTrigger);
-      const lenis = new window.Lenis({ duration: 1.2, easing: t => 1 - Math.pow(1 - t, 4), smoothWheel: true });
+      const lenis = new window.Lenis({ lerp: 0.14, smoothWheel: true, wheelMultiplier: 1 });
       window.V2_LENIS = lenis;
       lenis.on('scroll', ScrollTrigger.update);
       gsap.ticker.add(t => lenis.raf(t * 1000));
@@ -353,7 +366,7 @@
         s.lines.forEach(l => { const w = document.createElement('span'); w.className = 'split-line'; l.parentNode.insertBefore(w, l); w.appendChild(l); });
         gsap.from(s.lines, { yPercent: 115, duration: 1.3, ease: 'power4.out', stagger: 0.1, delay: 0.15 });
         const vid = document.querySelector('.g-hero video');
-        if (vid) gsap.to(vid.parentElement, { yPercent: 18, scale: 1.08, ease: 'none', scrollTrigger: { trigger: '.g-hero', start: 'top top', end: 'bottom top', scrub: true } });
+        if (vid) gsap.to(vid.parentElement, { yPercent: 12, ease: 'none', scrollTrigger: { trigger: '.g-hero', start: 'top top', end: 'bottom top', scrub: true } });
         gsap.from('.v2-stat', { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.08, delay: 0.6 });
       }
       reveal(document);
@@ -378,9 +391,9 @@
         s.lines.forEach(l => { const w = document.createElement('span'); w.className = 'split-line'; l.parentNode.insertBefore(w, l); w.appendChild(l); });
         gsap.from(s.lines, { yPercent: 110, duration: 1.15, ease: 'power4.out', stagger: 0.09, delay, scrollTrigger: { trigger: el, start: 'top 88%' } });
       } else if (el.dataset.reveal === 'media') {
-        gsap.fromTo(el, { opacity: 0, y: 60, clipPath: 'inset(8% 4% 0% 4% round 28px)' },
-          { opacity: 1, y: 0, clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 1.3, ease: 'expo.out', delay,
-            scrollTrigger: { trigger: el, start: 'top 92%' }, onStart: () => el.classList.add('v2-in'), onComplete: () => gsap.set(el, { clearProps: 'clipPath,transform' }) });
+        gsap.fromTo(el, { opacity: 0, y: 50 },
+          { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out', delay,
+            scrollTrigger: { trigger: el, start: 'top 92%' }, onStart: () => el.classList.add('v2-in'), onComplete: () => gsap.set(el, { clearProps: 'transform' }) });
       } else {
         gsap.fromTo(el, { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out', delay,
           scrollTrigger: { trigger: el, start: 'top 92%' }, onStart: () => el.classList.add('v2-in'), onComplete: () => gsap.set(el, { clearProps: 'transform' }) });
@@ -391,8 +404,6 @@
 
   /* ---------- start po vykreslení šablony ---------- */
   function boot() {
-    const aura = document.createElement('div'); aura.className = 'v2-aura'; aura.innerHTML = '<i></i><i></i><i></i>';
-    document.body.prepend(aura);
     tag(document); hero(); headerBehaviour(); switcher(); calendarDetail(); calendarList(); motion();
     // šablona překresluje části stránky (filtry, menu, popup na mapě) – nové prvky dooznačit
     let t;

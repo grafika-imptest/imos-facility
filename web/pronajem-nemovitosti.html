@@ -119,7 +119,7 @@ input,textarea,button{font-family:inherit}
               <a href="{{ o.href }}" aria-label="Prohlédnout nabídku – {{ o.name }}" onMouseEnter="{{ o.enter }}" onMouseLeave="{{ leaveCard }}" style="display:flex;flex-direction:column;height:100%;background:#fff;border:1px solid #DCE1E4;border-radius:16px;overflow:hidden;color:#14191C;box-shadow:{{ o.shadow }};transform:{{ o.lift }};transition:box-shadow 200ms ease-out, transform 200ms ease-out">
                 <div style="position:relative;height:340px;overflow:hidden;background:#EAF5FB">
                   <sc-if value="{{ o.photo }}" hint-placeholder-val="{{ false }}">
-                    <img src="{{ o.photo }}" alt="{{ o.name }}" style="width:100%;height:100%;object-fit:cover;display:block;transform:{{ o.imgScale }};filter:{{ o.imgFilter }};transition:transform 600ms cubic-bezier(0.22,1,0.36,1), filter 200ms ease-out">
+                    <img loading="lazy" decoding="async" src="{{ o.photo }}" alt="{{ o.name }}" style="width:100%;height:100%;object-fit:cover;display:block;transform:{{ o.imgScale }};filter:{{ o.imgFilter }};transition:transform 600ms cubic-bezier(0.22,1,0.36,1), filter 200ms ease-out">
                   </sc-if>
                   <sc-if value="{{ o.noPhoto }}" hint-placeholder-val="{{ false }}">
                     <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#075C82;background:repeating-linear-gradient(135deg, #EAF5FB 0px, #EAF5FB 14px, #E1F0F8 14px, #E1F0F8 15px);transform:{{ o.imgScale }};transition:transform 600ms cubic-bezier(0.22,1,0.36,1)">
