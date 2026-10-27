@@ -188,15 +188,18 @@
   // prvky se hledají při každém volání – šablona může stránku vykreslovat postupně a hero dorazit až po startu
   function headerBehaviour() {
     if (headerBehaviour.upd) return headerBehaviour.upd();
-    let last = scrollY;
+    let last = scrollY, peak = scrollY;
     const upd = headerBehaviour.upd = () => {
       const hd = document.querySelector('.g-header'), heroEl = document.querySelector('.g-hero');
       if (!hd) return;
       const y = scrollY;
       hd.classList.toggle('on-dark', !!heroEl && y < heroEl.offsetHeight - 120);
       const menuOpen = !!hd.querySelector(':scope > nav');
-      hd.classList.toggle('is-hidden', !menuOpen && y > 240 && y > last + 2);
-      if (y < last - 2) hd.classList.remove('is-hidden');
+      // schová se při scrollu dolů a zůstane schovaná; vrátí se až při scrollu nahoru (malé doběhy plynulého scrollu stav nemění)
+      if (y > last) peak = y;
+      if (menuOpen || y <= 240) hd.classList.remove('is-hidden');
+      else if (y > last + 2) hd.classList.add('is-hidden');
+      else if (peak - y > 8) hd.classList.remove('is-hidden');
       last = y;
     };
     addEventListener('scroll', upd, { passive: true }); upd();
@@ -238,6 +241,8 @@
   };
   const fmt = (d, o) => d.toLocaleDateString('cs-CZ', o);
   const slotOf = k => SLOTS.find(s => s[0] === k);
+  // asistent (imos-asistent.js) čte stejnou ukázkovou obsazenost
+  window.IMOS_AVAIL = { busy, isWeekend, iso, today };
 
   function calendarDetail() {
     const sec = document.querySelector('section[data-screen-label="Rezervace"]');
@@ -454,34 +459,31 @@
       });
       svg.addEventListener('pointerleave', () => wins.forEach(w => w.classList.remove('hot')));
     };
+    live();
+    // mraky plují zleva doprava a za pravým okrajem se vrací zleva (smyčka)
     motionLibs.then(() => {
       const { gsap } = window;
-      const x = el => { try { return el.getBBox().x; } catch (e) { return 0; } };
-      const parts = [...svg.querySelectorAll('.d:not(.g)')].sort((a, b) => x(a) - x(b));
-      const tl = gsap.timeline({ delay: 0.3, onComplete: () => { svg.classList.add('drawn'); live(); } });
-      tl.to(svg.querySelector('.g'), { strokeDashoffset: 0, duration: 1.2, ease: 'power2.inOut' })
-        .to(parts, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.out', stagger: { amount: 1.6 } }, 0.35)
-        .to(wins.slice().sort((a, b) => x(a) - x(b)), { strokeDashoffset: 0, duration: 0.5, ease: 'power1.out', stagger: { amount: 1.2 } }, 0.9);
-      // vítr ve stromech a plující mraky
-      svg.querySelectorAll('.t').forEach((t, i) => {
-        const [ox, oy] = t.dataset.o.split(' ');
-        gsap.fromTo(t, { rotation: -2.5 }, { rotation: 2.5, svgOrigin: ox + ' ' + oy, duration: 2.6 + i * 0.35, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+      svg.querySelectorAll('.c').forEach((c, i) => {
+        const bb = c.getBBox(), wrap = gsap.utils.wrap(-(bb.x + bb.width), 1600 - bb.x);
+        gsap.to(c, { x: '+=' + (1600 + bb.width), duration: 70 + i * 18, ease: 'none', repeat: -1,
+          modifiers: { x: v => wrap(parseFloat(v)) + 'px' } });
       });
-      svg.querySelectorAll('.c').forEach((c, i) => gsap.to(c, { x: i % 2 ? -60 : 60, duration: 14 + i * 4, ease: 'sine.inOut', yoyo: true, repeat: -1 }));
-    }).catch(live);
+    }).catch(() => {});
   }
 
   /* ---------- start po vykreslení šablony ---------- */
   function boot() {
     tag(document); hero(); headerBehaviour(); switcher(); calendarDetail(); calendarList(); motion(); skyline();
+    load('assets/v2/imos-asistent.js').catch(() => {});
     // šablona překresluje části stránky (filtry, menu, popup na mapě) – nové prvky dooznačit
     let t;
-    const own = n => n.nodeType !== 1 || n.closest('.leaflet-container, .v2-cal, .v2-when, .split-line, .v2-avail');
+    const own = n => n.nodeType !== 1 || n.closest('.leaflet-container, .v2-cal, .v2-when, .split-line, .v2-avail, .v2-ai, .v2-dog, .v2-dogband');
     new MutationObserver(list => {
       if (list.every(m => own(m.target))) return;
       clearTimeout(t);
       t = setTimeout(() => {
         tag(document); hero(); headerBehaviour(); calendarDetail(); skyline();
+        if (window.IMOS_MODULY) window.IMOS_MODULY.dog.band();
         if (calendarList.badges) calendarList.badges(); else calendarList();
         if (window.gsap && window.ScrollTrigger) { if (reveal(document)) window.ScrollTrigger.refresh(); }
         else if (reduce || !html.classList.contains('v2-motion')) document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('v2-in'));

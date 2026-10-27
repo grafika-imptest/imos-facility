@@ -228,11 +228,130 @@ html.v2 .g-hero > div:nth-of-type(4){padding-bottom:150px!important}
 html.v2 .g-hero > div:first-child{will-change:transform}
 
 /* O nás – ilustrace budov v hero (kresba čarou, svítící okna, vítr) */
-.g-skyline{display:block;width:100%;height:auto;margin:0 0 40px;overflow:visible}
+.g-skyline{display:block;width:100%;height:auto;margin:0 0 40px;overflow:hidden}
 .g-skyline .w{fill:#22A0D8;fill-opacity:0;transition:fill-opacity .9s ease}
 .g-skyline .w.on{fill-opacity:.28;transition-duration:.35s}
 .g-skyline .w.hot{fill-opacity:.5;transition-duration:.15s}
-html.v2-motion .g-skyline [pathLength]{stroke-dasharray:1;stroke-dashoffset:1}
-html.v2-motion .g-skyline.drawn [pathLength]{stroke-dasharray:none}
 /* kompozice jako na původním webu: nadpis na středu, ilustrace přes celou šířku, linka země navazuje na pás s čísly */
 .g-skyline--wide{margin:72px 0 -1.25%}
+
+/* ===== UKÁZKOVÉ MODULY: řízený asistent + hlídací pes (assets/v2/imos-asistent.js) ===== */
+.v2-demo{display:block;margin:0;font:500 12px/1.5 "Inter",system-ui,sans-serif;color:#6B767D}
+.v2-ai{position:fixed;right:18px;bottom:18px;z-index:2100;font:400 15px/1.5 "Inter",system-ui,sans-serif;color:var(--ink)}
+.v2-ai__fab{position:relative;display:flex;align-items:center;gap:10px;height:56px;padding:0 22px 0 18px;border:0;border-radius:999px;cursor:pointer;
+  background:linear-gradient(135deg,#0A6E9B,var(--imos-dark));color:#fff;font:600 15px/1 "Inter",system-ui,sans-serif;
+  box-shadow:0 18px 40px -14px rgba(4,38,58,.6);transition:transform .4s var(--ease),box-shadow .4s var(--ease),opacity .3s}
+.v2-ai__fab:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 22px 48px -14px rgba(4,38,58,.7)}
+.v2-ai__fab svg{width:22px;height:22px}
+.v2-ai__pulse{position:absolute;inset:0;border-radius:inherit;pointer-events:none;animation:v2pulse 2.6s 3s infinite}
+@keyframes v2pulse{0%{box-shadow:0 0 0 0 rgba(43,163,214,.5)}70%{box-shadow:0 0 0 16px rgba(43,163,214,0)}100%{box-shadow:0 0 0 0 rgba(43,163,214,0)}}
+.v2-ai.has-hint .v2-ai__fab::after{content:"Hledáte prostory nebo zasedačku? Pomohu vám.";position:absolute;right:0;bottom:calc(100% + 12px);width:230px;padding:12px 14px;border-radius:16px 16px 4px 16px;
+  background:#fff;color:var(--ink);font:500 14px/1.4 "Inter",system-ui,sans-serif;text-align:left;box-shadow:0 18px 40px -14px rgba(4,38,58,.35);animation:v2up .5s var(--ease) both}
+.v2-ai.is-open .v2-ai__fab{transform:scale(.9);opacity:0;pointer-events:none}
+.v2-ai__panel{position:absolute;right:0;bottom:0;width:min(400px,calc(100vw - 24px));height:min(640px,calc(100dvh - 120px));display:flex;flex-direction:column;
+  border-radius:24px;overflow:hidden;background:rgba(255,255,255,.95);border:1px solid rgba(255,255,255,.8);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);box-shadow:0 30px 80px -24px rgba(4,38,58,.45);
+  transform-origin:100% 100%;transform:translateY(16px) scale(.94);opacity:0;visibility:hidden;transition:transform .45s var(--ease),opacity .3s,visibility 0s .45s}
+.v2-ai.is-open .v2-ai__panel{transform:none;opacity:1;visibility:visible;transition:transform .45s var(--ease),opacity .3s}
+.v2-ai__head{display:flex;align-items:center;gap:12px;padding:14px 12px 14px 16px;background:linear-gradient(135deg,#0A6E9B,var(--imos-dark));color:#fff}
+.v2-ai__head > div{flex:1;min-width:0;display:flex;flex-direction:column}
+.v2-ai__head b{font:600 16px/1.2 var(--font-d)}
+.v2-ai__head small{display:flex;align-items:center;gap:6px;font-size:12px;opacity:.8}
+.v2-ai__head small i{width:7px;height:7px;border-radius:50%;background:#5FD08F;box-shadow:0 0 0 3px rgba(95,208,143,.25)}
+.v2-ai__avatar{width:40px;height:40px;flex:none;border-radius:12px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center}
+.v2-ai__avatar svg{width:22px;height:22px}
+.v2-ai__icon{width:36px;height:36px;flex:none;border:0;border-radius:50%;background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.v2-ai__icon:hover{background:rgba(255,255,255,.14)}
+.v2-ai__log{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:18px 16px 8px;display:flex;flex-direction:column;gap:10px}
+.v2-ai__msg{max-width:88%;padding:11px 14px;border-radius:18px;animation:v2up .4s var(--ease) both;overflow-wrap:anywhere}
+.v2-ai__msg.is-bot{align-self:flex-start;background:var(--imos-tint);border-bottom-left-radius:6px}
+.v2-ai__msg.is-user{align-self:flex-end;background:var(--imos);color:#fff;border-bottom-right-radius:6px}
+.v2-ai__msg a{color:var(--imos);font-weight:600}
+.v2-ai__msg:has(.v2-ai__cards), .v2-ai__msg:has(.v2-ai__form), .v2-ai__msg:has(.v2-ai-person){max-width:100%;width:100%;box-sizing:border-box}
+.v2-ai__dots{display:inline-flex;gap:4px;padding:4px 0}
+.v2-ai__dots i{width:7px;height:7px;border-radius:50%;background:var(--imos);opacity:.35;animation:v2dot 1s infinite}
+.v2-ai__dots i:nth-child(2){animation-delay:.15s}
+.v2-ai__dots i:nth-child(3){animation-delay:.3s}
+@keyframes v2dot{50%{opacity:1;transform:translateY(-3px)}}
+@keyframes v2up{from{opacity:0;transform:translateY(8px)}}
+.v2-ai__opts{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px 12px}
+.v2-ai__opts:empty{padding:0}
+.v2-ai__opts button{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 14px;border-radius:999px;border:1px solid rgba(7,92,130,.25);background:#fff;color:var(--imos);
+  font:600 14px/1.2 "Inter",system-ui,sans-serif;cursor:pointer;text-align:left;animation:v2up .35s var(--ease) both;transition:background .2s,color .2s,border-color .2s}
+.v2-ai__opts button:hover{background:var(--imos);border-color:var(--imos);color:#fff}
+.v2-ai__opts button svg{width:16px;height:16px}
+.v2-ai__foot{padding:8px 16px 12px;font-size:11px;color:#6B767D;text-align:center;border-top:1px solid var(--line)}
+.v2-ai__cards{display:flex;flex-direction:column;gap:8px}
+.v2-ai__card{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-radius:14px;background:#fff;border:1px solid rgba(7,92,130,.12);color:var(--ink)!important;text-decoration:none;font-weight:400!important;transition:transform .3s var(--ease),box-shadow .3s}
+a.v2-ai__card:hover{transform:translateX(3px);box-shadow:0 10px 24px -14px rgba(4,38,58,.35)}
+.v2-ai__card b{font:600 15px/1.3 var(--font-d)}
+.v2-ai__card small{font-size:13px;color:var(--ink-2)}
+.v2-ai__card.is-off{opacity:.55}
+.v2-ai__st{align-self:flex-start;margin-bottom:4px;padding:3px 8px;border-radius:999px;background:#EEF1F3;color:#6B767D;font:600 11px/1.3 "Inter",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.v2-ai__st.is-free{background:rgba(47,133,90,.12);color:#2F855A}
+.v2-ai-person{display:flex;flex-direction:column;gap:2px;margin-top:8px;padding:12px 14px;border-radius:14px;background:#fff}
+.v2-ai-person b{font:600 15px/1.3 var(--font-d)}
+.v2-ai-person span{font-size:13px;color:var(--ink-2);margin-bottom:4px}
+.v2-ai-person a{display:flex;align-items:center;gap:8px;font-size:14px;text-decoration:none}
+.v2-ai-person a svg{width:15px;height:15px;flex:none}
+.v2-ai__form{display:flex;flex-direction:column;gap:10px}
+.v2-ai__form label{display:flex;flex-direction:column;gap:4px;font:600 12px/1.3 "Inter",system-ui,sans-serif;color:var(--ink-2)}
+.v2-ai__form input,.v2-ai__form textarea{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:12px;border:1px solid #DCE1E4;background:#fff;font:400 15px/1.4 "Inter",system-ui,sans-serif;color:var(--ink);resize:vertical}
+.v2-ai__form input:focus,.v2-ai__form textarea:focus{outline:2px solid rgba(7,92,130,.35);border-color:var(--imos)}
+.v2-ai__form.is-err [required]{border-color:#C80225}
+.v2-ai__form button{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;border:0;border-radius:999px;background:var(--imos);color:#fff;font:600 15px/1 "Inter",system-ui,sans-serif;cursor:pointer}
+.v2-ai__form button:disabled,.v2-ai__form input:disabled,.v2-ai__form textarea:disabled{opacity:.6}
+@media (max-width:560px){
+  .v2-ai{right:10px;bottom:10px}
+  .v2-ai__fab{height:48px;padding:0 14px}
+  .v2-ai__fab-txt{display:none}
+  .v2-ai__panel{position:fixed;right:8px;left:8px;bottom:8px;width:auto;height:calc(100dvh - 96px)}
+}
+
+/* hlídací pes – okno */
+.v2-dog{position:fixed;inset:0;z-index:2200;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(4,38,58,.32);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);opacity:0;visibility:hidden;transition:opacity .35s,visibility 0s .35s}
+.v2-dog.is-open{opacity:1;visibility:visible;transition:opacity .35s}
+.v2-dog__box{position:relative;width:min(560px,100%);max-height:calc(100dvh - 32px);overflow-y:auto;box-sizing:border-box;padding:36px 32px 28px;border-radius:28px;background:#fff;
+  box-shadow:0 40px 90px -30px rgba(4,38,58,.5);display:flex;flex-direction:column;gap:18px;transform:translateY(16px) scale(.97);transition:transform .45s var(--ease)}
+.v2-dog.is-open .v2-dog__box{transform:none}
+.v2-dog__box h3{margin:0;font:650 28px/1.15 var(--font-d);letter-spacing:-.02em}
+.v2-dog__lead{margin:0;color:var(--ink-2);font-size:16px;line-height:1.55}
+.v2-dog__x{position:absolute;top:14px;right:14px;width:40px;height:40px;border:0;border-radius:50%;background:#EEF1F3;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.v2-dog__badge{width:56px;height:56px;border-radius:18px;background:var(--imos-tint);color:var(--imos);display:flex;align-items:center;justify-content:center}
+.v2-dog__badge svg{width:26px;height:26px}
+.v2-dog__badge.is-ok{background:rgba(47,133,90,.12);color:#2F855A}
+.v2-dog fieldset{margin:0;padding:0;border:0;min-width:0}
+.v2-dog legend,.v2-dog label{font:600 13px/1.3 "Inter",system-ui,sans-serif;color:var(--ink-2)}
+.v2-dog legend{margin-bottom:10px;padding:0}
+.v2-chips{display:flex;flex-wrap:wrap;gap:8px}
+.v2-chip{position:relative}
+.v2-chip input{position:absolute;opacity:0;pointer-events:none}
+.v2-chip span{display:inline-flex;align-items:center;height:38px;padding:0 14px;border-radius:999px;border:1px solid #DCE1E4;font:600 14px/1 "Inter",system-ui,sans-serif;color:var(--ink);cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+.v2-chip span:hover{border-color:var(--imos)}
+.v2-chip input:checked + span{background:var(--imos);border-color:var(--imos);color:#fff}
+.v2-chip input:focus-visible + span{outline:2px solid rgba(7,92,130,.4);outline-offset:2px}
+.v2-dog__row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.v2-dog label{display:flex;flex-direction:column;gap:6px}
+.v2-dog input[type=number],.v2-dog input[type=email]{height:48px;padding:0 14px;border-radius:14px;border:1px solid #DCE1E4;font:400 16px/1 "Inter",system-ui,sans-serif;color:var(--ink);min-width:0}
+.v2-dog input:focus{outline:2px solid rgba(7,92,130,.35);border-color:var(--imos)}
+.v2-dog__err{margin:0;color:#C80225;font-size:14px}
+.v2-dog__go{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:56px;border:0;border-radius:999px;background:linear-gradient(135deg,#0A6E9B,var(--imos-dark));color:#fff;font:600 16px/1 "Inter",system-ui,sans-serif;cursor:pointer;transition:transform .3s var(--ease)}
+.v2-dog__go:hover{transform:translateY(-2px)}
+
+/* hlídací pes – pruh pod výpisem nemovitostí */
+.v2-dogband{margin-top:48px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:24px 28px;border-radius:24px;background:linear-gradient(120deg,var(--imos-tint),#fff);border:1px solid var(--line)}
+.v2-dogband > div{flex:1 1 320px}
+.v2-dogband b{display:block;font:650 22px/1.25 var(--font-d);letter-spacing:-.015em}
+.v2-dogband p{margin:4px 0 0;color:var(--ink-2);font-size:16px;line-height:1.5}
+.v2-dogband__ico{width:56px;height:56px;flex:none;border-radius:18px;background:#fff;color:var(--imos);display:flex;align-items:center;justify-content:center;box-shadow:var(--glass-shadow)}
+.v2-dogband__ico svg{width:26px;height:26px}
+.v2-dogband__ico.is-on{color:#2F855A;animation:v2ring 2.4s 1s infinite}
+@keyframes v2ring{0%,60%,100%{transform:rotate(0)}10%,30%{transform:rotate(-12deg)}20%,40%{transform:rotate(12deg)}}
+.v2-dogband button{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 24px;border:0;border-radius:999px;background:var(--imos);color:#fff;font:600 15px/1 "Inter",system-ui,sans-serif;cursor:pointer;transition:transform .3s var(--ease),background .2s}
+.v2-dogband button:hover{background:var(--imos-dark);transform:translateY(-2px)}
+@media (max-width:560px){.v2-dog__box{padding:28px 20px 22px}.v2-dog__box h3{font-size:24px}.v2-dogband button{width:100%;justify-content:center}}
+@media (prefers-reduced-motion:reduce){.v2-ai__pulse,.v2-dogband__ico.is-on{animation:none}}
+.v2-dog__box > *{flex-shrink:0}
+html.v2-dog-open .v2-switch,html.v2-dog-open .v2-ai{visibility:hidden}
+@media (max-width:560px){html.v2-ai-open .v2-switch{visibility:hidden}}
