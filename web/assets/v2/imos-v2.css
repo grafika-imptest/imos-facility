@@ -226,3 +226,11 @@ html.v2 .g-hero > div:nth-of-type(4){padding-bottom:150px!important}
 
 /* výkon: video v hero na vlastní vrstvě */
 html.v2 .g-hero > div:first-child{will-change:transform}
+
+/* O nás – ilustrace budov v hero (kresba čarou, svítící okna, vítr) */
+.g-skyline{display:block;width:100%;height:auto;margin:0 0 40px;overflow:visible}
+.g-skyline .w{fill:#22A0D8;fill-opacity:0;transition:fill-opacity .9s ease}
+.g-skyline .w.on{fill-opacity:.28;transition-duration:.35s}
+.g-skyline .w.hot{fill-opacity:.5;transition-duration:.15s}
+html.v2-motion .g-skyline [pathLength]{stroke-dasharray:1;stroke-dashoffset:1}
+html.v2-motion .g-skyline.drawn [pathLength]{stroke-dasharray:none}

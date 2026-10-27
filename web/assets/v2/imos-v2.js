@@ -429,9 +429,51 @@
     return n;
   }
 
+  /* ---------- O nás: ilustrace budov ožívá ---------- */
+  function skyline() {
+    const svg = document.querySelector('.g-skyline');
+    if (!svg || svg.dataset.v2s) return;
+    svg.dataset.v2s = 1;
+    const wins = [...svg.querySelectorAll('.w')];
+    const live = () => {
+      // okna se náhodně rozsvěcují a zhasínají, jako v podvečer v kancelářích
+      let visible = true;
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(svg);
+      wins.forEach(w => Math.random() < 0.22 && w.classList.add('on'));
+      setInterval(() => {
+        if (!visible || document.hidden) return;
+        for (let i = 0; i < 3; i++) wins[Math.floor(Math.random() * wins.length)].classList.toggle('on');
+      }, 700);
+      // okna pod kurzorem se rozsvítí
+      const pt = svg.createSVGPoint();
+      const centers = wins.map(w => { const b = w.getBBox(); return [b.x + b.width / 2, b.y + b.height / 2]; });
+      svg.addEventListener('pointermove', e => {
+        pt.x = e.clientX; pt.y = e.clientY;
+        const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+        wins.forEach((w, i) => w.classList.toggle('hot', Math.hypot(centers[i][0] - p.x, centers[i][1] - p.y) < 80));
+      });
+      svg.addEventListener('pointerleave', () => wins.forEach(w => w.classList.remove('hot')));
+    };
+    motionLibs.then(() => {
+      const { gsap } = window;
+      const x = el => { try { return el.getBBox().x; } catch (e) { return 0; } };
+      const parts = [...svg.querySelectorAll('.d:not(.g)')].sort((a, b) => x(a) - x(b));
+      const tl = gsap.timeline({ delay: 0.3, onComplete: () => { svg.classList.add('drawn'); live(); } });
+      tl.to(svg.querySelector('.g'), { strokeDashoffset: 0, duration: 1.2, ease: 'power2.inOut' })
+        .to(parts, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.out', stagger: { amount: 1.6 } }, 0.35)
+        .to(wins.slice().sort((a, b) => x(a) - x(b)), { strokeDashoffset: 0, duration: 0.5, ease: 'power1.out', stagger: { amount: 1.2 } }, 0.9);
+      // vítr ve stromech a plující mraky
+      svg.querySelectorAll('.t').forEach((t, i) => {
+        const [ox, oy] = t.dataset.o.split(' ');
+        gsap.fromTo(t, { rotation: -2.5 }, { rotation: 2.5, svgOrigin: ox + ' ' + oy, duration: 2.6 + i * 0.35, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+      });
+      svg.querySelectorAll('.c').forEach((c, i) => gsap.to(c, { x: i % 2 ? -60 : 60, duration: 14 + i * 4, ease: 'sine.inOut', yoyo: true, repeat: -1 }));
+    }).catch(live);
+  }
+
   /* ---------- start po vykreslení šablony ---------- */
   function boot() {
-    tag(document); hero(); headerBehaviour(); switcher(); calendarDetail(); calendarList(); motion();
+    tag(document); hero(); headerBehaviour(); switcher(); calendarDetail(); calendarList(); motion(); skyline();
     // šablona překresluje části stránky (filtry, menu, popup na mapě) – nové prvky dooznačit
     let t;
     const own = n => n.nodeType !== 1 || n.closest('.leaflet-container, .v2-cal, .v2-when, .split-line, .v2-avail');
@@ -439,7 +481,7 @@
       if (list.every(m => own(m.target))) return;
       clearTimeout(t);
       t = setTimeout(() => {
-        tag(document); hero(); headerBehaviour(); calendarDetail();
+        tag(document); hero(); headerBehaviour(); calendarDetail(); skyline();
         if (calendarList.badges) calendarList.badges(); else calendarList();
         if (window.gsap && window.ScrollTrigger) { if (reveal(document)) window.ScrollTrigger.refresh(); }
         else if (reduce || !html.classList.contains('v2-motion')) document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('v2-in'));
