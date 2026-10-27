@@ -203,17 +203,18 @@
   }
 
   /* ---------- přepínač verzí ---------- */
-  const LIVE = 'https://www.imos-facility.cz/';
-  const LIVE_MAP = { index: '', 'pronajem-nemovitosti': 'pronajem-nemovitosti-v-brne', 'detail-nemovitosti': 'pronajem-nemovitosti-v-brne',
+  // „Současný web“ = kopie živého webu ve složce soucasny/ (tools/snapshot-soucasny.mjs), má stejný přepínač
+  const LIVE_MAP = { index: 'index', 'pronajem-nemovitosti': 'pronajem-nemovitosti-v-brne', 'detail-nemovitosti': 'pronajem-nemovitosti-v-brne',
     'zasedaci-mistnosti': 'pronajem-zasedacich-mistnosti', 'detail-zasedaci-mistnosti': 'pronajem-zasedacich-mistnosti',
     'sprava-nemovitosti': 'sprava-nemovitosti', 'o-nas': 'o-nas', kontakt: 'kontakty' };
   function switcher() {
     if (document.querySelector('.v2-switch')) return;
     const el = document.createElement('nav');
     el.className = 'v2-switch'; el.setAttribute('aria-label', 'Přepnout verzi webu');
-    // současný web nejde vložit do rámu (X-Frame-Options: SAMEORIGIN), proto se otevírá v nové záložce
     el.innerHTML = `<a class="is-on" href="${location.href}" aria-current="page">Nový návrh</a>`
-      + `<a href="${LIVE + (LIVE_MAP[page] || '')}" target="_blank" rel="noopener">Současný web <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg></a>`;
+      + `<a href="soucasny/${LIVE_MAP[page] || 'index'}.html" data-to-old>Současný web</a>`;
+    // zpět z kopie se vrátí přesně sem (i na detail s parametry)
+    el.querySelector('[data-to-old]').addEventListener('click', () => { try { sessionStorage.setItem('imos-v2-from', location.href); } catch (e) {} });
     document.body.appendChild(el);
   }
 
