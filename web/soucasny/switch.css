@@ -1,0 +1,9 @@
+/* Přepínač verzí v kopii současného webu – stejný vzhled jako v návrhu (assets/v2/imos-v2.css) */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap");
+.v2-switch{position:fixed;left:18px;bottom:18px;z-index:2147483000;display:flex;align-items:center;gap:4px;padding:5px;border-radius:999px;
+  background:rgba(15,26,32,.86);border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 18px 40px -16px rgba(0,0,0,.45);font:600 13px/1 "Inter",system-ui,sans-serif;letter-spacing:0;text-transform:none}
+.v2-switch a{display:flex;align-items:center;gap:8px;height:36px;padding:0 16px;border-radius:999px;color:rgba(255,255,255,.78)!important;text-decoration:none!important;white-space:nowrap;transition:background .3s,color .3s;font:inherit}
+.v2-switch a:hover{color:#fff!important;background:rgba(255,255,255,.1)}
+.v2-switch a.is-on{background:#fff;color:#0F1A20!important}
+@media (max-width:560px){.v2-switch{left:10px;bottom:10px}.v2-switch a{padding:0 12px}}

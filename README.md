@@ -17,3 +17,10 @@ Veřejný náhled: https://grafika-imptest.github.io/imos-facility/
 Aktualizace po změnách:
 
     git subtree split --prefix web -b gh-pages && git push -f origin gh-pages && git branch -D gh-pages
+
+## Kopie současného webu (`web/soucasny/`)
+
+Přepínač „Nový návrh / Současný web“ vede na kopii 6 hlavních stránek www.imos-facility.cz,
+ve které je stejný přepínač. Kopie se obnoví příkazem `node tools/snapshot-soucasny.mjs`
+(stáhne HTML a styly, fonty a SVG ikony uloží lokálně, fotky bere ze živého webu,
+odstraní měření GTM, cookie lištu a captchu; formuláře jsou v kopii vypnuté).
