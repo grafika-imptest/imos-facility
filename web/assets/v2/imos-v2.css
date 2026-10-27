@@ -234,3 +234,5 @@ html.v2 .g-hero > div:first-child{will-change:transform}
 .g-skyline .w.hot{fill-opacity:.5;transition-duration:.15s}
 html.v2-motion .g-skyline [pathLength]{stroke-dasharray:1;stroke-dashoffset:1}
 html.v2-motion .g-skyline.drawn [pathLength]{stroke-dasharray:none}
+/* kompozice jako na původním webu: nadpis na středu, ilustrace přes celou šířku, linka země navazuje na pás s čísly */
+.g-skyline--wide{margin:72px 0 -1.25%}
